@@ -1,6 +1,8 @@
 /// <reference types="vite/client" />
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { getAuth } from "@workos/authkit-tanstack-react-start";
+import { AuthKitProvider } from "@workos/authkit-tanstack-react-start/client";
 import appCss from "../styles.css?url";
 import "@mantine/core/styles.css";
 
@@ -8,6 +10,10 @@ import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { theme } from "~/lib/theme";
 
 export const Route = createRootRoute({
+  loader: async () => {
+    const auth = await getAuth();
+    return { auth };
+  },
   component: RootComponent,
   errorComponent: ErrorComponent,
   head: () => ({
@@ -23,6 +29,8 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
+  const { auth } = Route.useLoaderData();
+
   return (
     <html lang="ja">
       <head>
@@ -30,9 +38,16 @@ function RootComponent() {
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider theme={theme}>
-          <Outlet />
-        </MantineProvider>
+        <AuthKitProvider
+          initialAuth={auth}
+          onSessionExpired={() => {
+            window.location.href = "/";
+          }}
+        >
+          <MantineProvider theme={theme}>
+            <Outlet />
+          </MantineProvider>
+        </AuthKitProvider>
         <TanStackRouterDevtools position="bottom-right" />
         <Scripts />
       </body>
