@@ -30,6 +30,7 @@
     "@tanstack/react-start": "^1.143.11",
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/valibot-adapter": "^1.144.0",
+    "@workos/authkit-tanstack-react-start": "^0.4.1",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.1",
     "drizzle-typebox": "^0.3.3",
