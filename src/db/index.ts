@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 import { drizzle, LibSQLDatabase } from "drizzle-orm/libsql";
-// import * as schema from "~/db/schema";
+import * as schema from "~/db/schema";
 
 class DatabaseError extends Error {
   status = 500;
@@ -11,8 +11,7 @@ class DatabaseError extends Error {
   }
 }
 
-// TODO: typeof schema にする
-let db: LibSQLDatabase<any> | null = null;
+let db: LibSQLDatabase<typeof schema> | null = null;
 
 //! サーバーサイドでのみ環境変数・DBを読み込む
 if (typeof window === "undefined") {
@@ -23,12 +22,11 @@ if (typeof window === "undefined") {
       url: process.env.TURSO_DATABASE_URL!,
       authToken: process.env.TURSO_AUTH_TOKEN!,
     },
-    // schema,
+    schema,
   });
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getDb(): LibSQLDatabase<any> {
+export function getDb(): LibSQLDatabase<typeof schema> {
   if (!db) {
     throw new DatabaseError(
       "Database not initialized. This should only be called on the server side.",
