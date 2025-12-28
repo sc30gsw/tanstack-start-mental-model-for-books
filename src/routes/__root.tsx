@@ -2,6 +2,10 @@
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import appCss from "../styles.css?url";
+import "@mantine/core/styles.css";
+
+import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { theme } from "~/lib/theme";
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -23,9 +27,12 @@ function RootComponent() {
     <html lang="ja">
       <head>
         <HeadContent />
+        <ColorSchemeScript />
       </head>
       <body>
-        <Outlet />
+        <MantineProvider theme={theme}>
+          <Outlet />
+        </MantineProvider>
         <TanStackRouterDevtools position="bottom-right" />
         <Scripts />
       </body>
