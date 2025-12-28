@@ -1,0 +1,54 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": ["bun.lock"],
+      "schema": {
+        "allowTrailingCommas": true
+      }
+    }
+  ],
+  "files.readonlyInclude": {
+    "bun.lock": true,
+    "**/routeTree.gen.ts": true,
+    "**/*.md": true
+  },
+  "cSpell.ignorePaths": ["bun.lock", "**/routeTree.gen.ts", "**/*.md"],
+  "cSpell.words": [
+    "bunx",
+    "Lefthook",
+    "oxfmt",
+    "oxfmtrc",
+    "oxlint",
+    "oxlintrc",
+    "tsgo",
+    "tsgolint"
+  ],
+
+  // oxc
+  "oxc.enable": true,
+  "oxc.fmt.experimental": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "editor.formatOnSave": true,
+
+  // Disable other linters/formatters
+  "prettier.enable": false,
+  "biome.enabled": false,
+  "eslint.enable": false
+}

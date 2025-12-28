@@ -1,0 +1,23 @@
+# dependencies
+node_modules
+
+# output
+dist
+.output
+
+# environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# caches
+.cache
+*.tsbuildinfo
+
+# IntelliJ based IDEs
+.idea
+
+# Finder (MacOS) folder config
+.DS_Store
