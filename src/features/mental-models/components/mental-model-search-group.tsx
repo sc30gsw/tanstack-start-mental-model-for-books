@@ -6,30 +6,10 @@ import { useEffect, useState } from "react";
 import type { MentalModelSearchParams } from "~/features/mental-models/types/schemas/search-params/search-schema";
 
 export function MentalModelSearchGroup() {
-  const routeApi = getRouteApi("/_authenticated/mental-models/");
-
-  const navigate = routeApi.useNavigate();
-
-  const search = routeApi.useSearch();
-  const status = search.status ?? "all";
-
   return (
     <Group gap="sm">
       <SearchTextInput />
-      <Select
-        placeholder="ステータス"
-        value={status}
-        onChange={(value) =>
-          navigate({ search: { ...search, status: value as MentalModelSearchParams["status"] } })
-        }
-        data={[
-          { value: "all", label: "すべて" },
-          { value: "reading", label: "読書中" },
-          { value: "completed", label: "完了" },
-        ]}
-        w={120}
-        clearable={false}
-      />
+      <StatusSelect />
     </Group>
   );
 }
@@ -62,6 +42,25 @@ function SearchTextInput() {
       value={searchValue}
       onChange={(e) => setSearchValue(e.target.value)}
       w={250}
+    />
+  );
+}
+
+function StatusSelect() {
+  const routeApi = getRouteApi("/_authenticated/mental-models/");
+
+  const navigate = routeApi.useNavigate();
+
+  const search = routeApi.useSearch();
+  const status = search.status ?? "all";
+
+  return (
+    <Select
+      placeholder="ステータス"
+      value={status}
+      onChange={(value) =>
+        navigate({ search: { ...search, status: value as MentalModelSearchParams["status"] } })
+      }
     />
   );
 }
