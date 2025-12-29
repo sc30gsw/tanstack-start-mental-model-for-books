@@ -10,6 +10,7 @@ export function MentalModelSearchGroup() {
     <Group gap="sm">
       <SearchTextInput />
       <StatusSelect />
+      <LikedSelect />
     </Group>
   );
 }
@@ -65,6 +66,31 @@ function StatusSelect() {
         { value: "all", label: "すべて" },
         { value: "reading", label: "読書中" },
         { value: "completed", label: "完了" },
+      ]}
+      w={120}
+      clearable={false}
+    />
+  );
+}
+
+function LikedSelect() {
+  const routeApi = getRouteApi("/_authenticated/mental-models/");
+
+  const navigate = routeApi.useNavigate();
+
+  const search = routeApi.useSearch();
+  const liked = search.liked ?? "all";
+
+  return (
+    <Select
+      placeholder="いいね"
+      value={liked}
+      onChange={(value) =>
+        navigate({ search: { ...search, liked: value as MentalModelSearchParams["liked"] } })
+      }
+      data={[
+        { value: "all", label: "すべて" },
+        { value: "liked", label: "いいね済み" },
       ]}
       w={120}
       clearable={false}
