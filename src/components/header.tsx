@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@workos/authkit-tanstack-react-start/client";
 import { AppShell, Avatar, Group, Menu, Text, Title } from "@mantine/core";
+import { useColorScheme } from "~/hooks/use-color-scheme";
 
 function BookIcon({ size = 24 }: { size?: number }) {
   return (
@@ -39,6 +40,48 @@ function LogoutIcon({ size = 16 }: { size?: number }) {
   );
 }
 
+function SunIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2" />
+      <path d="M12 20v2" />
+      <path d="m4.93 4.93 1.41 1.41" />
+      <path d="m17.66 17.66 1.41 1.41" />
+      <path d="M2 12h2" />
+      <path d="M20 12h2" />
+      <path d="m6.34 17.66-1.41 1.41" />
+      <path d="m19.07 4.93-1.41 1.41" />
+    </svg>
+  );
+}
+
+function MoonIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+    </svg>
+  );
+}
+
 function getAvatarInitials(user: ReturnType<typeof useAuth>["user"]) {
   if (!user) {
     return "U";
@@ -61,10 +104,15 @@ function getAvatarInitials(user: ReturnType<typeof useAuth>["user"]) {
 
 function UserMenu() {
   const { user } = useAuth();
+  const { colorScheme, setColorScheme } = useColorScheme();
 
   if (!user) {
     return null;
   }
+
+  const toggleColorScheme = () => {
+    setColorScheme((current) => (current === "dark" ? "light" : "dark"));
+  };
 
   return (
     <Menu shadow="md" width={200}>
@@ -98,6 +146,15 @@ function UserMenu() {
 
         <Menu.Item component={Link} to="/mental-models" leftSection={<BookIcon size={16} />}>
           メンタルモデル
+        </Menu.Item>
+
+        <Menu.Divider />
+
+        <Menu.Item
+          onClick={toggleColorScheme}
+          leftSection={colorScheme === "dark" ? <SunIcon size={16} /> : <MoonIcon size={16} />}
+        >
+          {colorScheme === "dark" ? "ライトモード" : "ダークモード"}
         </Menu.Item>
 
         <Menu.Divider />

@@ -6,9 +6,16 @@ import { AuthKitProvider } from "@workos/authkit-tanstack-react-start/client";
 import appCss from "../styles.css?url";
 import "@mantine/core/styles.css";
 
-import { AppShell, ColorSchemeScript, MantineProvider } from "@mantine/core";
+import {
+  AppShell,
+  ColorSchemeScript,
+  MantineProvider,
+  type MantineColorScheme,
+} from "@mantine/core";
+import { useLocalStorage, useWindowEvent } from "@mantine/hooks";
 import { theme } from "~/lib/theme";
 import { Header } from "~/components/header";
+import { ColorSchemeContext } from "~/hooks/use-color-scheme";
 
 export const Route = createRootRoute({
   loader: async () => {
@@ -33,11 +40,27 @@ export const Route = createRootRoute({
 function RootComponent() {
   const { auth } = Route.useLoaderData();
 
+  const [colorScheme, setColorScheme] = useLocalStorage<MantineColorScheme>({
+    key: "mantine-color-scheme",
+    defaultValue: "light",
+  });
+
+  useWindowEvent("keydown", (e) => {
+    if (e.code === "KeyJ" && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+
+      setColorScheme((current: MantineColorScheme) => (current === "dark" ? "light" : "dark"));
+    }
+  });
+
   return (
     <html lang="ja">
       <head>
         <HeadContent />
-        <ColorSchemeScript />
+        <ColorSchemeScript
+          defaultColorScheme={colorScheme}
+          localStorageKey="mantine-color-scheme"
+        />
       </head>
       <body>
         <AuthKitProvider
@@ -46,14 +69,16 @@ function RootComponent() {
             window.location.href = "/";
           }}
         >
-          <MantineProvider theme={theme}>
-            <AppShell header={{ height: 60 }}>
-              <Header />
-              <AppShell.Main>
-                <Outlet />
-              </AppShell.Main>
-            </AppShell>
-          </MantineProvider>
+          <ColorSchemeContext.Provider value={{ colorScheme, setColorScheme }}>
+            <MantineProvider theme={theme} defaultColorScheme={colorScheme}>
+              <AppShell header={{ height: 60 }}>
+                <Header />
+                <AppShell.Main>
+                  <Outlet />
+                </AppShell.Main>
+              </AppShell>
+            </MantineProvider>
+          </ColorSchemeContext.Provider>
         </AuthKitProvider>
         <TanStackRouterDevtools position="bottom-right" />
         <Scripts />
