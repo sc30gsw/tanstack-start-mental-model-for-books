@@ -21,15 +21,15 @@ export abstract class MentalModelService {
         .where(eq(mentalModels.userId, userId))
         .orderBy(mentalModels.createdAt);
 
-      return results.map((row) => ({
-        ...row.mental_models,
-        createdAt: row.mental_models.createdAt.toISOString(),
-        updatedAt: row.mental_models.updatedAt.toISOString(),
-        book: {
-          ...row.books,
-          createdAt: undefined,
-        },
-      }));
+      return results.map((row) => {
+        const { createdAt: _, ...bookWithoutCreatedAt } = row.books;
+        return {
+          ...row.mental_models,
+          createdAt: row.mental_models.createdAt.toISOString(),
+          updatedAt: row.mental_models.updatedAt.toISOString(),
+          book: bookWithoutCreatedAt,
+        };
+      });
     } catch (error) {
       if (error instanceof MentalModelNotFoundError || error instanceof BookNotFoundError) {
         throw error;
@@ -64,14 +64,12 @@ export abstract class MentalModelService {
         throw new MentalModelNotFoundError(id);
       }
 
+      const { createdAt: _, ...bookWithoutCreatedAt } = row.books;
       return {
         ...row.mental_models,
         createdAt: row.mental_models.createdAt.toISOString(),
         updatedAt: row.mental_models.updatedAt.toISOString(),
-        book: {
-          ...row.books,
-          createdAt: undefined,
-        },
+        book: bookWithoutCreatedAt,
       };
     } catch (error) {
       if (error instanceof MentalModelNotFoundError || error instanceof BookNotFoundError) {

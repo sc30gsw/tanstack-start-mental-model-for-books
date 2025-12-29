@@ -31,16 +31,16 @@ import {
   IconArrowDown,
   IconArrowsUpDown,
 } from "@tabler/icons-react";
-import type { MentalModelWithBook } from "~/features/mental-models/collections";
 import { MentalModelDetail } from "~/features/mental-models/components/mental-model-detail";
 import { getRouteApi } from "@tanstack/react-router";
+import type { MentalModelModel } from "~/features/mental-models/api/model";
 
-const columnHelper = createColumnHelper<MentalModelWithBook>();
+const columnHelper = createColumnHelper<MentalModelModel.response>();
 
 type MentalModelTableProps = {
-  data: MentalModelWithBook[];
-  onEdit: (mentalModel: MentalModelWithBook) => void;
-  onDelete: (id: MentalModelWithBook["id"]) => void;
+  data: MentalModelModel.response[];
+  onEdit: (mentalModel: MentalModelModel.response) => void;
+  onDelete: (id: MentalModelModel.response["id"]) => void;
 };
 
 export function MentalModelTable({ data, onEdit, onDelete }: MentalModelTableProps) {
@@ -52,7 +52,7 @@ export function MentalModelTable({ data, onEdit, onDelete }: MentalModelTablePro
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [detailModal, setDetailModal] = useState<MentalModelWithBook | null>(null);
+  const [detailModal, setDetailModal] = useState<MentalModelModel.response | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   const columns = useMemo(

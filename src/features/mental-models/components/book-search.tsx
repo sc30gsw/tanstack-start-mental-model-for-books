@@ -6,7 +6,7 @@ import {
   type BookSearchResult,
 } from "~/features/mental-models/utils/search-google-books";
 import { useAuth } from "@workos/authkit-tanstack-react-start/client";
-import type { GoogleBooksModel } from "~/features/books/server/models";
+import type { GoogleBooksModel } from "~/features/books/api/models";
 
 type BookSearchProps = {
   onSelect: (book: BookSearchResult) => void;

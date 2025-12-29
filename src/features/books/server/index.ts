@@ -34,8 +34,9 @@ export const googleBooksPlugin = new Elysia({ prefix: "/google-books", name: "go
   })
   .get(
     "/search",
-    async ({ query }) => {
+    async ({ query, user }) => {
       return await GoogleBooksService.search({
+        userId: user.id,
         query: query.q,
         maxResults: query.maxResults,
       });
@@ -57,6 +58,7 @@ export const googleBooksPlugin = new Elysia({ prefix: "/google-books", name: "go
 
       if (!book) {
         set.status = 404;
+
         return {
           error: "Book not found",
           code: "GOOGLE_BOOKS_API_ERROR",

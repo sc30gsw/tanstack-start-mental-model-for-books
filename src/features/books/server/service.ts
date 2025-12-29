@@ -43,6 +43,7 @@ export abstract class GoogleBooksService {
   static async getById(params: GoogleBooksModel.GetByIdRequestParams) {
     try {
       const { googleBookId } = params;
+
       const url = `${this.BASE_URL}/${googleBookId}`;
 
       const response = await fetch(url);

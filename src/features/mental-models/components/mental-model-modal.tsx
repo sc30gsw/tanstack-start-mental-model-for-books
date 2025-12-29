@@ -21,14 +21,14 @@ import { useAuth } from "@workos/authkit-tanstack-react-start/client";
 import { BookSearch } from "~/features/mental-models/components/book-search";
 import { createOrGetBook } from "~/features/mental-models/utils/create-or-get-book";
 import type { BookSearchResult } from "~/features/mental-models/utils/search-google-books";
-import type { MentalModelWithBook } from "~/features/mental-models/collections";
 import {
   mentalModelFormSchemaForForm,
   type MentalModelFormData,
   type MentalModelUpdateData,
 } from "~/features/mental-models/types/schemas/mental-model-schema";
-import type { GoogleBooksModel } from "~/features/books/server/models";
-import type { MentalModelModel } from "~/features/mental-models/server/model";
+import type { GoogleBooksModel } from "~/features/books/api/models";
+import type { MentalModelModel } from "~/features/mental-models/api/model";
+
 type MentalModelModalProps = {
   opened: boolean;
   onClose: () => void;
@@ -37,7 +37,7 @@ type MentalModelModalProps = {
       | MentalModelFormData
       | { id: MentalModelModel.response["id"]; data: MentalModelUpdateData },
   ) => Promise<void>;
-  mentalModel?: MentalModelWithBook | null;
+  mentalModel?: MentalModelModel.response | null;
 };
 
 export function MentalModelModal({

@@ -11,9 +11,11 @@ import {
   ThemeIcon,
 } from "@mantine/core";
 import { IconBook, IconBulb, IconTarget, IconCircleCheck } from "@tabler/icons-react";
-import type { MentalModelWithBook } from "~/features/mental-models/collections";
+import type { MentalModelModel } from "~/features/mental-models/api/model";
 
-export function MentalModelDetail({ mentalModel }: Record<"mentalModel", MentalModelWithBook>) {
+export function MentalModelDetail({
+  mentalModel,
+}: Record<"mentalModel", MentalModelModel.response>) {
   const { book } = mentalModel;
 
   const getAnswerList = (answers: string[]) => {

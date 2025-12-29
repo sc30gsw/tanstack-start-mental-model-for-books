@@ -1,6 +1,7 @@
 import { t } from "elysia";
 import { createSelectSchema, createInsertSchema } from "drizzle-typebox";
 import { books } from "~/db/schema";
+import type { MentalModelModel } from "~/features/mental-models/server/model";
 
 const bookSelectSchema = createSelectSchema(books);
 const bookInsertSchema = createInsertSchema(books);
@@ -118,6 +119,7 @@ export namespace GoogleBooksModel {
   export type searchParams = typeof searchParams.static;
 
   export type SearchRequestParams = {
+    userId: MentalModelModel.GetByIdRequestParams["userId"];
     query: typeof searchQuery.properties.q.static;
     maxResults?: typeof searchQuery.properties.maxResults.static;
   };
