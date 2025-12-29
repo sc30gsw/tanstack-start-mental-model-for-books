@@ -1,7 +1,43 @@
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@workos/authkit-tanstack-react-start/client";
 import { AppShell, Avatar, Group, Menu, Text, Title } from "@mantine/core";
-import { IconBook, IconLogout } from "@tabler/icons-react";
+
+function BookIcon({ size = 24 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+    </svg>
+  );
+}
+
+function LogoutIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+      <polyline points="16 17 21 12 16 7" />
+      <line x1="21" y1="12" x2="9" y2="12" />
+    </svg>
+  );
+}
 
 export function Header() {
   const { user } = useAuth();
@@ -30,7 +66,7 @@ export function Header() {
     <AppShell.Header>
       <Group h="100%" px="md" justify="space-between">
         <Group gap="sm">
-          <IconBook size={24} />
+          <BookIcon size={24} />
           <Title order={4}>読書メンタルモデル</Title>
         </Group>
 
@@ -64,7 +100,7 @@ export function Header() {
 
               <Menu.Divider />
 
-              <Menu.Item component={Link} to="/mental-models" leftSection={<IconBook size={16} />}>
+              <Menu.Item component={Link} to="/mental-models" leftSection={<BookIcon size={16} />}>
                 メンタルモデル
               </Menu.Item>
 
@@ -73,7 +109,7 @@ export function Header() {
               <Menu.Item
                 component="a"
                 href="/logout"
-                leftSection={<IconLogout size={16} />}
+                leftSection={<LogoutIcon size={16} />}
                 color="red"
               >
                 ログアウト
