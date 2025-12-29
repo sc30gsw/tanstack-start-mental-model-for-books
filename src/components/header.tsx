@@ -1,5 +1,3 @@
-"use client";
-
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@workos/authkit-tanstack-react-start/client";
 import { AppShell, Avatar, Group, Menu, Text, Title } from "@mantine/core";
