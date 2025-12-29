@@ -109,14 +109,14 @@ function MentalModelTableContainer({
   const { mentalModels, collection } = useMentalModelsQuery(userId);
   const { remove } = useMentalModelMutations(collection, userId);
 
-  const handleDelete = async (id: MentalModelModel.response["id"]) => {
-    await remove(id);
-  };
-
   const mentalModelsArray: MentalModelModel.response[] = Array.from(mentalModels.values());
 
   return (
-    <MentalModelTable data={mentalModelsArray} onEdit={onOpenEditModal} onDelete={handleDelete} />
+    <MentalModelTable
+      data={mentalModelsArray}
+      onEdit={onOpenEditModal}
+      onDelete={(id) => remove(id)}
+    />
   );
 }
 

@@ -45,16 +45,16 @@ export function useMentalModelMutations(
     }
 
     collection.update(id, (draft) => {
-      Object.assign(draft, data);
+      return { ...draft, ...data };
     });
   };
 
-  const remove = async (id: MentalModelModel.GetByIdRequestParams["id"]) => {
+  const remove = (id: MentalModelModel.GetByIdRequestParams["id"]) => {
     if (!collection) {
       throw new Error("Collection is required");
     }
 
-    collection.delete([id]);
+    collection.delete(id);
   };
 
   return { create, update, remove } as const;
