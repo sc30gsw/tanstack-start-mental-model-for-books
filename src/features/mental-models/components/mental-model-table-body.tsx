@@ -2,11 +2,12 @@ import { memo } from "react";
 import { flexRender, type Table as TanStackTable } from "@tanstack/react-table";
 import { Table, Text } from "@mantine/core";
 import type { MentalModelModel } from "~/features/mental-models/api/model";
+import type { MentalModelSearchParams } from "~/features/mental-models/types/schemas/search-params/search-schema";
 
 type MentalModelTableBodyProps = {
   table: TanStackTable<MentalModelModel.response>;
   columnsCount: number;
-  globalFilter: string;
+  globalFilter: MentalModelSearchParams["search"];
   onRowClick?: (mentalModel: MentalModelModel.response) => void;
 };
 
