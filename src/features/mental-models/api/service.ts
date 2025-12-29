@@ -20,7 +20,7 @@ export abstract class MentalModelService {
       });
 
       return results.map((row) => {
-        const { createdAt: _, ...bookWithoutCreatedAt } = row;
+        const { createdAt: _, ...bookWithoutCreatedAt } = row.book;
 
         return {
           ...row,
