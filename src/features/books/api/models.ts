@@ -1,7 +1,7 @@
 import { t } from "elysia";
 import { createSelectSchema, createInsertSchema } from "drizzle-typebox";
 import { books } from "~/db/schema";
-import type { MentalModelModel } from "~/features/mental-models/server/model";
+import type { MentalModelModel } from "~/features/mental-models/api/model";
 
 const bookSelectSchema = createSelectSchema(books);
 const bookInsertSchema = createInsertSchema(books);

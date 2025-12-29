@@ -1,7 +1,7 @@
 import { Elysia } from "elysia";
 import { openapi } from "@elysiajs/openapi";
-import { mentalModelsPlugin } from "~/features/mental-models/server";
-import { booksPlugin, googleBooksPlugin } from "~/features/books/server";
+import { mentalModelsPlugin } from "~/features/mental-models/api";
+import { booksPlugin, googleBooksPlugin } from "~/features/books/api";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const app = new Elysia({ prefix: "/api" })

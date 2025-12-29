@@ -29,6 +29,7 @@ export const sessionMiddleware = new Elysia({ name: "session" })
     switch (code) {
       case "UnauthorizedError":
         set.status = error.status;
+
         return {
           error: error.message,
           code: "UNAUTHORIZED",
@@ -36,6 +37,7 @@ export const sessionMiddleware = new Elysia({ name: "session" })
 
       case "UserNotFoundError":
         set.status = error.status;
+
         return {
           error: error.message,
           code: "USER_NOT_FOUND",

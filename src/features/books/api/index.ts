@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
-import { GoogleBooksService } from "~/features/books/server/service";
-import { GoogleBooksModel } from "~/features/books/server/models";
-import { GoogleBooksApiError, BookNotFoundError } from "~/features/books/server/error";
+import { GoogleBooksService } from "~/features/books/api/service";
+import { GoogleBooksModel } from "~/features/books/api/models";
+import { GoogleBooksApiError, BookNotFoundError } from "~/features/books/api/error";
 import { BookService } from "./service";
 import { BookModel } from "./models";
 import { sessionMiddleware } from "~/lib/session-middleware";

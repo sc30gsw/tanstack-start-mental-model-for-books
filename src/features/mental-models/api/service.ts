@@ -1,11 +1,8 @@
 import { eq, and } from "drizzle-orm";
 import { getDb, DatabaseError } from "~/db";
 import { books, mentalModels } from "~/db/schema";
-import {
-  MentalModelNotFoundError,
-  BookNotFoundError,
-} from "~/features/mental-models/server/errors";
-import type { MentalModelModel } from "~/features/mental-models/server/model";
+import { MentalModelNotFoundError, BookNotFoundError } from "~/features/mental-models/api/errors";
+import type { MentalModelModel } from "~/features/mental-models/api/model";
 
 export abstract class MentalModelService {
   static async getAll(params: MentalModelModel.GetAllRequestParams) {

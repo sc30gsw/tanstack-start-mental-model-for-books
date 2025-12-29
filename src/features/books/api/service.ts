@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
 import { getDb, DatabaseError } from "~/db";
 import { books } from "~/db/schema";
-import { GoogleBooksApiError, BookNotFoundError } from "~/features/books/server/error";
-import type { GoogleBooksModel, BookModel } from "~/features/books/server/models";
+import { GoogleBooksApiError, BookNotFoundError } from "~/features/books/api/error";
+import type { GoogleBooksModel, BookModel } from "~/features/books/api/models";
 
 export abstract class GoogleBooksService {
   private static readonly BASE_URL = "https://www.googleapis.com/books/v1/volumes";
