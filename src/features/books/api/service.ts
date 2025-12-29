@@ -91,16 +91,14 @@ export abstract class BookService {
     try {
       const db = getDb();
 
-      const existing = await db
-        .select()
-        .from(books)
-        .where(eq(books.googleBookId, params.googleBookId))
-        .limit(1);
+      const existing = await db.query.books.findFirst({
+        where: eq(books.googleBookId, params.googleBookId),
+      });
 
-      if (existing.length > 0 && existing[0]) {
+      if (existing) {
         return {
-          ...existing[0],
-          createdAt: existing[0].createdAt.toISOString(),
+          ...existing,
+          createdAt: existing.createdAt.toISOString(),
         };
       }
 
@@ -134,15 +132,17 @@ export abstract class BookService {
     try {
       const db = getDb();
 
-      const results = await db.select().from(books).where(eq(books.id, params.id)).limit(1);
+      const results = await db.query.books.findFirst({
+        where: eq(books.id, params.id),
+      });
 
-      if (results.length === 0 || !results[0]) {
+      if (!results) {
         throw new BookNotFoundError(params.id);
       }
 
       return {
-        ...results[0],
-        createdAt: results[0].createdAt.toISOString(),
+        ...results,
+        createdAt: results.createdAt.toISOString(),
       };
     } catch (error) {
       if (error instanceof BookNotFoundError) {

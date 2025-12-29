@@ -11,19 +11,21 @@ export abstract class MentalModelService {
 
       const db = getDb();
 
-      const results = await db
-        .select()
-        .from(mentalModels)
-        .innerJoin(books, eq(mentalModels.bookId, books.id))
-        .where(eq(mentalModels.userId, userId))
-        .orderBy(mentalModels.createdAt);
+      const results = await db.query.mentalModels.findMany({
+        where: eq(mentalModels.userId, userId),
+        orderBy: [mentalModels.createdAt],
+        with: {
+          book: true,
+        },
+      });
 
       return results.map((row) => {
-        const { createdAt: _, ...bookWithoutCreatedAt } = row.books;
+        const { createdAt: _, ...bookWithoutCreatedAt } = row;
+
         return {
-          ...row.mental_models,
-          createdAt: row.mental_models.createdAt.toISOString(),
-          updatedAt: row.mental_models.updatedAt.toISOString(),
+          ...row,
+          createdAt: row.createdAt.toISOString(),
+          updatedAt: row.updatedAt.toISOString(),
           book: bookWithoutCreatedAt,
         };
       });
@@ -44,28 +46,23 @@ export abstract class MentalModelService {
 
       const db = getDb();
 
-      const results = await db
-        .select()
-        .from(mentalModels)
-        .innerJoin(books, eq(mentalModels.bookId, books.id))
-        .where(and(eq(mentalModels.id, id), eq(mentalModels.userId, userId)))
-        .limit(1);
+      const results = await db.query.mentalModels.findFirst({
+        where: and(eq(mentalModels.id, id), eq(mentalModels.userId, userId)),
+        with: {
+          book: true,
+        },
+      });
 
-      if (results.length === 0) {
+      if (!results) {
         throw new MentalModelNotFoundError(id);
       }
 
-      const row = results[0];
+      const { createdAt: _, ...bookWithoutCreatedAt } = results.book;
 
-      if (!row) {
-        throw new MentalModelNotFoundError(id);
-      }
-
-      const { createdAt: _, ...bookWithoutCreatedAt } = row.books;
       return {
-        ...row.mental_models,
-        createdAt: row.mental_models.createdAt.toISOString(),
-        updatedAt: row.mental_models.updatedAt.toISOString(),
+        ...results,
+        createdAt: results.createdAt.toISOString(),
+        updatedAt: results.updatedAt.toISOString(),
         book: bookWithoutCreatedAt,
       };
     } catch (error) {
@@ -84,9 +81,11 @@ export abstract class MentalModelService {
       const { userId, data } = params;
       const db = getDb();
 
-      const bookExists = await db.select().from(books).where(eq(books.id, data.bookId)).limit(1);
+      const bookExists = await db.query.books.findFirst({
+        where: eq(books.id, data.bookId),
+      });
 
-      if (bookExists.length === 0) {
+      if (!bookExists) {
         throw new BookNotFoundError(data.bookId);
       }
 
