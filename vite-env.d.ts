@@ -13,7 +13,6 @@ interface ImportMetaEnv {
   readonly TURSO_DATABASE_URL: string;
   readonly TURSO_AUTH_TOKEN: string;
   readonly VITE_APP_URL: string;
-  readonly GOOGLE_BOOKS_API_KEY: string;
 }
 
 interface ImportMeta {
