@@ -8,19 +8,22 @@ const mentalModelInsertSchema = createInsertSchema(mentalModels);
 export namespace MentalModelModel {
   export const status = t.Union([t.Literal("reading"), t.Literal("completed")]);
 
-  export const createBody = t.Object({
-    bookId: t.String(),
-    status: t.Optional(status),
-    whyReadAnswer1: t.String(),
-    whyReadAnswer2: t.Optional(t.String()),
-    whyReadAnswer3: t.Optional(t.String()),
-    whatToGainAnswer1: t.Optional(t.String()),
-    whatToGainAnswer2: t.Optional(t.String()),
-    whatToGainAnswer3: t.Optional(t.String()),
-    goalAfterReadingAnswer1: t.Optional(t.String()),
-    goalAfterReadingAnswer2: t.Optional(t.String()),
-    goalAfterReadingAnswer3: t.Optional(t.String()),
-  });
+  export const createBody = t.Intersect([
+    t.Pick(mentalModelInsertSchema, ["bookId", "whyReadAnswer1"]),
+    t.Partial(
+      t.Pick(mentalModelInsertSchema, [
+        "status",
+        "whyReadAnswer2",
+        "whyReadAnswer3",
+        "whatToGainAnswer1",
+        "whatToGainAnswer2",
+        "whatToGainAnswer3",
+        "goalAfterReadingAnswer1",
+        "goalAfterReadingAnswer2",
+        "goalAfterReadingAnswer3",
+      ]),
+    ),
+  ]);
   export type createBody = typeof createBody.static;
 
   export const updateBody = t.Partial(
@@ -31,7 +34,7 @@ export namespace MentalModelModel {
   export const params = t.Object({
     id: t.String(),
   });
-  export type params = typeof params.static;
+  export type params = Pick<typeof mentalModelSelectSchema.static, "id">;
 
   export const response = t.Object({
     ...mentalModelSelectSchema.properties,
@@ -45,6 +48,8 @@ export namespace MentalModelModel {
       thumbnailUrl: t.Nullable(t.String()),
       description: t.Nullable(t.String()),
     }),
+    likedByCurrentUser: t.Boolean(),
+    likesCount: t.Number(),
   });
   export type response = typeof response.static;
 
@@ -56,23 +61,18 @@ export namespace MentalModelModel {
   });
   export type deleteResponse = typeof deleteResponse.static;
 
-  export type GetAllRequestParams = {
-    userId: typeof mentalModelSelectSchema.properties.userId.static;
-  };
+  export type GetAllRequestParams = Pick<typeof mentalModelSelectSchema.static, "userId">;
 
-  export type GetByIdRequestParams = {
-    id: typeof mentalModelSelectSchema.properties.id.static;
-    userId: typeof mentalModelSelectSchema.properties.userId.static;
-  };
+  export type GetByIdRequestParams = Pick<typeof mentalModelSelectSchema.static, "id" | "userId">;
 
   export type CreateRequestParams = {
-    userId: typeof mentalModelSelectSchema.properties.userId.static;
+    userId: typeof mentalModelSelectSchema.static.userId;
     data: Omit<typeof mentalModelInsertSchema.static, "id" | "userId" | "createdAt" | "updatedAt">;
   };
 
   export type UpdateRequestParams = {
-    id: typeof mentalModelSelectSchema.properties.id.static;
-    userId: typeof mentalModelSelectSchema.properties.userId.static;
+    id: typeof mentalModelSelectSchema.static.id;
+    userId: typeof mentalModelSelectSchema.static.userId;
     data: Partial<
       Omit<
         typeof mentalModelInsertSchema.static,
@@ -81,10 +81,7 @@ export namespace MentalModelModel {
     >;
   };
 
-  export type DeleteRequestParams = {
-    id: typeof mentalModelSelectSchema.properties.id.static;
-    userId: typeof mentalModelSelectSchema.properties.userId.static;
-  };
+  export type DeleteRequestParams = Pick<typeof mentalModelSelectSchema.static, "id" | "userId">;
 
   export const databaseError = t.Object({
     error: t.String(),

@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { index, integer, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 
 export const users = sqliteTable(
   "users",
@@ -89,15 +89,76 @@ export const mentalModels = sqliteTable(
   (table) => [index("index_mental_models_on_status").on(table.status)],
 );
 
+export const likes = sqliteTable(
+  "likes",
+  {
+    mentalModelId: text("mental_model_id")
+      .notNull()
+      .references(() => mentalModels.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+  },
+  (table) => [
+    index("index_likes_on_mental_model_id").on(table.mentalModelId),
+    index("index_likes_on_user_id").on(table.userId),
+    unique("likes_mental_model_id_user_id_unique").on(table.mentalModelId, table.userId),
+  ],
+);
+
+export const actionPlans = sqliteTable(
+  "action_plans",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    mentalModelId: text("mental_model_id")
+      .notNull()
+      .references(() => mentalModels.id, { onDelete: "cascade" }),
+    content: text("content").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [index("index_action_plans_on_mental_model_id").on(table.mentalModelId)],
+);
+
 export const userRelations = relations(users, ({ many }) => ({
   mentalModels: many(mentalModels),
+  likes: many(likes),
 }));
 
 export const bookRelations = relations(books, ({ many }) => ({
   mentalModels: many(mentalModels),
 }));
 
-export const mentalModelRelations = relations(mentalModels, ({ one }) => ({
+export const mentalModelRelations = relations(mentalModels, ({ one, many }) => ({
   user: one(users, { fields: [mentalModels.userId], references: [users.id] }),
   book: one(books, { fields: [mentalModels.bookId], references: [books.id] }),
+  likes: many(likes),
+  actionPlans: many(actionPlans),
+}));
+
+export const likeRelations = relations(likes, ({ one }) => ({
+  mentalModel: one(mentalModels, {
+    fields: [likes.mentalModelId],
+    references: [mentalModels.id],
+  }),
+  user: one(users, {
+    fields: [likes.userId],
+    references: [users.id],
+  }),
+}));
+
+export const actionPlanRelations = relations(actionPlans, ({ one }) => ({
+  mentalModel: one(mentalModels, {
+    fields: [actionPlans.mentalModelId],
+    references: [mentalModels.id],
+  }),
 }));
