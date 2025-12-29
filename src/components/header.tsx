@@ -148,6 +148,10 @@ function UserMenu() {
           メンタルモデル
         </Menu.Item>
 
+        <Menu.Item component={Link} to={`/users/${user.id}`} leftSection={<BookIcon size={16} />}>
+          マイページ
+        </Menu.Item>
+
         <Menu.Divider />
 
         <Menu.Item
