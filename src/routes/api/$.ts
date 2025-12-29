@@ -1,6 +1,8 @@
 import { Elysia } from "elysia";
 import { openapi } from "@elysiajs/openapi";
 import { mentalModelsPlugin } from "~/features/mental-models/api";
+import { likesPlugin } from "~/features/likes/api";
+import { actionPlansPlugin } from "~/features/action-plans/api";
 import { booksPlugin, googleBooksPlugin } from "~/features/books/api";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -16,6 +18,8 @@ export const app = new Elysia({ prefix: "/api" })
         },
         tags: [
           { name: "Mental Models", description: "Mental model CRUD operations" },
+          { name: "Likes", description: "Like operations" },
+          { name: "Action Plans", description: "Action plan operations" },
           { name: "Books", description: "Book management" },
           { name: "Google Books", description: "Google Books API integration" },
         ],
@@ -23,6 +27,8 @@ export const app = new Elysia({ prefix: "/api" })
     }),
   )
   .use(mentalModelsPlugin)
+  .use(likesPlugin)
+  .use(actionPlansPlugin)
   .use(booksPlugin)
   .use(googleBooksPlugin);
 
