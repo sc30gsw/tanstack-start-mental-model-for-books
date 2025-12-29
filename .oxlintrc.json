@@ -14,7 +14,7 @@
   },
   "overrides": [
     {
-      "files": ["src/router.tsx", "vite.config.ts"],
+      "files": ["src/router.tsx", "vite.config.ts", "drizzle.config.ts"],
       "rules": {
         "no-default-export": "off"
       }
