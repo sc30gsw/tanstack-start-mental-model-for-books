@@ -61,6 +61,13 @@ function StatusSelect() {
       onChange={(value) =>
         navigate({ search: { ...search, status: value as MentalModelSearchParams["status"] } })
       }
+      data={[
+        { value: "all", label: "すべて" },
+        { value: "reading", label: "読書中" },
+        { value: "completed", label: "完了" },
+      ]}
+      w={120}
+      clearable={false}
     />
   );
 }
