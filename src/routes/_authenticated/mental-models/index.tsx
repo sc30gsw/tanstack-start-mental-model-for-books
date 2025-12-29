@@ -7,7 +7,6 @@ import { useAuth } from "@workos/authkit-tanstack-react-start/client";
 import { MentalModelTable } from "~/features/mental-models/components/mental-model-table";
 import { MentalModelModal } from "~/features/mental-models/components/mental-model-modal";
 import { useMentalModelsQuery } from "~/features/mental-models/hooks/use-mental-models-query";
-import { useMentalModelMutations } from "~/features/mental-models/hooks/use-mental-models-mutation";
 import {
   mentalModelDefaultSearchParams,
   mentalModelSearchSchema,
@@ -19,6 +18,7 @@ import type {
 import { IconPlus } from "@tabler/icons-react";
 import { MentalModelSearchGroup } from "~/features/mental-models/components/mental-model-search-group";
 import type { MentalModelModel } from "~/features/mental-models/api/model";
+import { mentalModelsCollection } from "~/features/mental-models/mental-models-collections";
 
 export const Route = createFileRoute("/_authenticated/mental-models/")({
   ssr: false,
@@ -103,19 +103,19 @@ function MentalModelsPageContent() {
 function MentalModelTableContainer({
   onOpenEditModal,
 }: Record<"onOpenEditModal", (mentalModel: MentalModelModel.response) => void>) {
-  const { user } = useAuth();
-  const userId = user?.id ?? "";
-
-  const { mentalModels, collection } = useMentalModelsQuery(userId);
-  const { remove } = useMentalModelMutations(collection, userId);
+  const { mentalModels } = useMentalModelsQuery();
 
   const mentalModelsArray: MentalModelModel.response[] = Array.from(mentalModels.values());
 
+  //? データの変更を検知するためのkeyを生成（各アイテムのidとupdatedAtの組み合わせ）
+  const tableKey = mentalModelsArray.map((m) => `${m.id}-${m.updatedAt}`).join(",");
+
   return (
     <MentalModelTable
+      key={tableKey}
       data={mentalModelsArray}
       onEdit={onOpenEditModal}
-      onDelete={(id) => remove(id)}
+      onDelete={(id) => mentalModelsCollection.delete(id)}
     />
   );
 }
@@ -134,18 +134,34 @@ function MentalModelModalContainer({
   const { user } = useAuth();
   const userId = user?.id ?? "";
 
-  const { collection } = useMentalModelsQuery(userId);
-  const { create, update } = useMentalModelMutations(collection, userId);
-
   const handleSubmit = async (
-    data: MentalModelFormData | { id: string; data: MentalModelUpdateData },
+    data:
+      | MentalModelFormData
+      | { id: MentalModelModel.response["id"]; data: MentalModelUpdateData },
   ) => {
     if ("id" in data && "data" in data) {
-      await update(data.id, data.data);
+      mentalModelsCollection.update(data.id, (draft) => {
+        Object.assign(draft, data.data);
+      });
     } else {
-      await create(data);
+      mentalModelsCollection.insert({
+        ...data,
+        userId,
+        id: crypto.randomUUID(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        book: {
+          id: data.bookId,
+          title: "",
+          googleBookId: "",
+          authors: null,
+          thumbnailUrl: null,
+          description: null,
+        },
+      });
+
+      onClose();
     }
-    onClose();
   };
 
   return (

@@ -1,21 +1,17 @@
-import { useMemo } from "react";
 import { useLiveSuspenseQuery } from "@tanstack/react-db";
 import { getRouteApi } from "@tanstack/react-router";
 import { eq, like, or } from "@tanstack/db";
-import { createMentalModelsCollection } from "~/features/mental-models/mental-models-collections";
-import type { MentalModelModel } from "~/features/mental-models/api/model";
+import { mentalModelsCollection } from "~/features/mental-models/mental-models-collections";
 
-export function useMentalModelsQuery(userId: MentalModelModel.GetAllRequestParams["userId"]) {
+export function useMentalModelsQuery() {
   const routeApi = getRouteApi("/_authenticated/mental-models/");
   const search = routeApi.useSearch();
   const status = search.status;
   const searchQuery = search.search ?? "";
 
-  const collection = useMemo(() => createMentalModelsCollection(userId), [userId]);
-
   const { data } = useLiveSuspenseQuery(
     (q) => {
-      let query = q.from({ mentalModels: collection });
+      let query = q.from({ mentalModels: mentalModelsCollection });
 
       if (status && status !== "all") {
         query = query.where(({ mentalModels }) => eq(mentalModels.status, status));
@@ -23,6 +19,7 @@ export function useMentalModelsQuery(userId: MentalModelModel.GetAllRequestParam
 
       if (searchQuery.trim() !== "") {
         const searchPattern = `%${searchQuery}%`;
+
         query = query.where(({ mentalModels }) => {
           return or(
             like(mentalModels.book.title, searchPattern),
@@ -35,8 +32,8 @@ export function useMentalModelsQuery(userId: MentalModelModel.GetAllRequestParam
 
       return query;
     },
-    [status, searchQuery, collection],
+    [status, searchQuery],
   );
 
-  return { mentalModels: data, collection } as const;
+  return { mentalModels: data } as const;
 }
