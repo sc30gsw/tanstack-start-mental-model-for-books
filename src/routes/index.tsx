@@ -54,7 +54,7 @@ function Home() {
               >
                 メンタルモデルを見る
               </Button>
-              <Button component="a" href="/logout" variant="outline" color="gray">
+              <Button component="a" href="/logout" variant="outline" color="red">
                 ログアウト
               </Button>
             </Group>

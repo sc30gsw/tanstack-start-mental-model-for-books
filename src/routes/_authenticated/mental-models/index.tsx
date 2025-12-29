@@ -2,6 +2,7 @@ import { useState, Suspense } from "react";
 import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
 import { valibotValidator } from "@tanstack/valibot-adapter";
 import { Container, Title, Stack, Loader, Center, Text, Group, Button } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { useAuth } from "@workos/authkit-tanstack-react-start/client";
 import { MentalModelTable } from "~/features/mental-models/components/mental-model-table";
 import { MentalModelModal } from "~/features/mental-models/components/mental-model-modal";
@@ -61,21 +62,21 @@ function MentalModelsPageContentContainer() {
 }
 
 function MentalModelsPageContent() {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [editingModel, setEditingModel] = useState<MentalModelModel.response | null>(null);
 
   const handleOpenCreateModal = () => {
     setEditingModel(null);
-    setModalOpen(true);
+    openModal();
   };
 
   const handleOpenEditModal = (mentalModel: MentalModelModel.response) => {
     setEditingModel(mentalModel);
-    setModalOpen(true);
+    openModal();
   };
 
   const handleCloseModal = () => {
-    setModalOpen(false);
+    closeModal();
     setEditingModel(null);
   };
 
@@ -91,7 +92,7 @@ function MentalModelsPageContent() {
         <MentalModelTableContainer onOpenEditModal={handleOpenEditModal} />
       </Stack>
       <MentalModelModalContainer
-        opened={modalOpen}
+        opened={modalOpened}
         editingModel={editingModel}
         onClose={handleCloseModal}
       />
