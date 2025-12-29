@@ -1,21 +1,16 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { ActionIcon, Image, Text, Badge, Group, Tooltip } from "@mantine/core";
-import { IconEye, IconEdit, IconTrash } from "@tabler/icons-react";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
 import type { MentalModelModel } from "~/features/mental-models/api/model";
 
 const columnHelper = createColumnHelper<MentalModelModel.response>();
 
 type UseColumnsParams = {
   onEdit: (mentalModel: MentalModelModel.response) => void;
-  onOpenDetail: (mentalModel: MentalModelModel.response) => void;
   onOpenDelete: (id: MentalModelModel.response["id"]) => void;
 };
 
-export function useMentalModelTableColumns({
-  onEdit,
-  onOpenDetail,
-  onOpenDelete,
-}: UseColumnsParams) {
+export function useMentalModelTableColumns({ onEdit, onOpenDelete }: UseColumnsParams) {
   return [
     columnHelper.accessor("book.thumbnailUrl", {
       id: "thumbnail",
@@ -89,18 +84,27 @@ export function useMentalModelTableColumns({
       header: "操作",
       cell: ({ row }) => (
         <Group gap="xs" wrap="nowrap">
-          <Tooltip label="詳細を見る">
-            <ActionIcon variant="subtle" color="gray" onClick={() => onOpenDetail(row.original)}>
-              <IconEye size={16} />
-            </ActionIcon>
-          </Tooltip>
           <Tooltip label="編集">
-            <ActionIcon variant="subtle" color="blue" onClick={() => onEdit(row.original)}>
+            <ActionIcon
+              variant="subtle"
+              color="blue"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(row.original);
+              }}
+            >
               <IconEdit size={16} />
             </ActionIcon>
           </Tooltip>
           <Tooltip label="削除">
-            <ActionIcon variant="subtle" color="red" onClick={() => onOpenDelete(row.original.id)}>
+            <ActionIcon
+              variant="subtle"
+              color="red"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenDelete(row.original.id);
+              }}
+            >
               <IconTrash size={16} />
             </ActionIcon>
           </Tooltip>

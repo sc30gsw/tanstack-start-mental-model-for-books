@@ -7,12 +7,14 @@ type MentalModelTableBodyProps = {
   table: TanStackTable<MentalModelModel.response>;
   columnsCount: number;
   globalFilter: string;
+  onRowClick?: (mentalModel: MentalModelModel.response) => void;
 };
 
 export const MentalModelTableBody = memo(function MentalModelTableBody({
   table,
   columnsCount,
   globalFilter,
+  onRowClick,
 }: MentalModelTableBodyProps) {
   return (
     <Table.Tbody>
@@ -28,7 +30,11 @@ export const MentalModelTableBody = memo(function MentalModelTableBody({
         </Table.Tr>
       ) : (
         table.getRowModel().rows.map((row) => (
-          <Table.Tr key={row.id}>
+          <Table.Tr
+            key={row.id}
+            style={{ cursor: onRowClick ? "pointer" : "default" }}
+            onClick={() => onRowClick?.(row.original)}
+          >
             {row.getVisibleCells().map((cell) => {
               const isThumbnail = cell.column.id === "thumbnail";
               return (

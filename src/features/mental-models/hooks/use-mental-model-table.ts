@@ -8,7 +8,7 @@ import {
   type ColumnFiltersState,
   type SortingState,
 } from "@tanstack/react-table";
-import { useReducer, useState, useEffect } from "react";
+import { useReducer, useState } from "react";
 import type { MentalModelModel } from "~/features/mental-models/api/model";
 import { useMentalModelTableColumns } from "~/features/mental-models/hooks/use-mental-model-table-columns";
 import type { MentalModelTable } from "~/features/mental-models/components/mental-model-table";
@@ -101,7 +101,6 @@ export function useMentalModelTable({
 
   const columns = useMentalModelTableColumns({
     onEdit,
-    onOpenDetail: handleOpenDetail,
     onOpenDelete: handleOpenDelete,
   });
 
@@ -133,14 +132,6 @@ export function useMentalModelTable({
     },
   });
 
-  // dataが変更されたときにテーブルを更新
-  useEffect(() => {
-    table.setOptions((prev) => ({
-      ...prev,
-      data,
-    }));
-  }, [data, table]);
-
   return {
     columns,
     table,
@@ -148,6 +139,7 @@ export function useMentalModelTable({
     detailModalOpened,
     deleteModalOpened,
     detailModalData,
+    handleOpenDetail,
     handleCloseDetail,
     handleCloseDelete,
     handleConfirmDelete,

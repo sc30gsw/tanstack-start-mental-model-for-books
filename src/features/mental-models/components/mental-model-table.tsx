@@ -21,6 +21,7 @@ export function MentalModelTable({ data, onEdit, onDelete }: MentalModelTablePro
     detailModalOpened,
     deleteModalOpened,
     detailModalData,
+    handleOpenDetail,
     handleCloseDetail,
     handleCloseDelete,
     handleConfirmDelete,
@@ -67,6 +68,7 @@ export function MentalModelTable({ data, onEdit, onDelete }: MentalModelTablePro
               table={table}
               columnsCount={columns.length}
               globalFilter={globalFilter}
+              onRowClick={handleOpenDetail}
             />
           </Table>
         </ScrollArea>
