@@ -54,7 +54,7 @@ function RootComponent() {
   });
 
   return (
-    <html lang="ja">
+    <html lang="ja" data-mantine-color-scheme={colorScheme}>
       <head>
         <HeadContent />
         <ColorSchemeScript
