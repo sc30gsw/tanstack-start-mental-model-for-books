@@ -14,7 +14,3 @@ interface ImportMetaEnv {
   readonly TURSO_AUTH_TOKEN: string;
   readonly VITE_APP_URL: string;
 }
-
-interface ImportMeta {
-  readonly env: ImportMetaEnv;
-}
