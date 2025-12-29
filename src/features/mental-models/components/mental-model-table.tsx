@@ -1,23 +1,11 @@
-import { useState, useCallback } from "react";
-import {
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  useReactTable,
-  type SortingState,
-  type ColumnFiltersState,
-} from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
 import { Table, Group, Modal, Paper, Pagination, ScrollArea } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { IconArrowUp, IconArrowDown, IconArrowsUpDown } from "@tabler/icons-react";
 import { MentalModelDetail } from "~/features/mental-models/components/mental-model-detail";
-import { getRouteApi } from "@tanstack/react-router";
 import type { MentalModelModel } from "~/features/mental-models/api/model";
 import { MentalModelDeleteModal } from "~/features/mental-models/components/mental-model-delete-modal";
 import { MentalModelTableBody } from "~/features/mental-models/components/mental-model-table-body";
-import { useMentalModelTableColumns } from "~/features/mental-models/hooks/use-mental-model-table-columns";
+import { useMentalModelTable } from "~/features/mental-models/hooks/use-mental-model-table";
 
 type MentalModelTableProps = {
   data: MentalModelModel.response[];
@@ -26,88 +14,17 @@ type MentalModelTableProps = {
 };
 
 export function MentalModelTable({ data, onEdit, onDelete }: MentalModelTableProps) {
-  const routeApi = getRouteApi("/_authenticated/mental-models/");
-  const search = routeApi.useSearch();
-  const globalFilter = search.search ?? "";
-
-  const navigate = routeApi.useNavigate();
-
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-
-  const [detailModalOpened, { open: openDetailModal, close: closeDetailModal }] =
-    useDisclosure(false);
-  const [deleteModalOpened, { open: openDeleteModal, close: closeDeleteModal }] =
-    useDisclosure(false);
-
-  const [detailModalData, setDetailModalData] = useState<MentalModelModel.response | null>(null);
-  const [deleteMentalModelId, setDeleteMentalModelId] = useState<
-    MentalModelModel.response["id"] | null
-  >(null);
-
-  const handleOpenDetail = (mentalModel: MentalModelModel.response) => {
-    setDetailModalData(mentalModel);
-    openDetailModal();
-  };
-
-  const handleCloseDetail = () => {
-    closeDetailModal();
-    setDetailModalData(null);
-  };
-
-  const handleOpenDelete = useCallback(
-    (mentalModelId: MentalModelModel.response["id"]) => {
-      setDeleteMentalModelId(mentalModelId);
-      openDeleteModal();
-    },
-    [openDeleteModal],
-  );
-
-  const handleCloseDelete = useCallback(() => {
-    closeDeleteModal();
-    setDeleteMentalModelId(null);
-  }, [closeDeleteModal]);
-
-  const handleConfirmDelete = useCallback(() => {
-    if (deleteMentalModelId) {
-      onDelete(deleteMentalModelId);
-      handleCloseDelete();
-    }
-  }, [deleteMentalModelId, onDelete, handleCloseDelete]);
-
-  const columns = useMentalModelTableColumns({
-    onEdit,
-    onOpenDetail: handleOpenDetail,
-    onOpenDelete: handleOpenDelete,
-  });
-
-  const table = useReactTable({
-    data,
+  const {
     columns,
-    state: {
-      sorting,
-      columnFilters,
-      globalFilter,
-    },
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: (value: string) => navigate({ search: { ...search, search: value } }),
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    globalFilterFn: (row, columnId, filterValue) => {
-      const title = row.original.book.title.toLowerCase();
-      const authors = row.original.book.authors?.toLowerCase() ?? "";
-      const search = filterValue.toLowerCase();
-      return title.includes(search) || authors.includes(search);
-    },
-    initialState: {
-      pagination: {
-        pageSize: 10,
-      },
-    },
-  });
+    table,
+    globalFilter,
+    detailModalOpened,
+    deleteModalOpened,
+    detailModalData,
+    handleCloseDetail,
+    handleCloseDelete,
+    handleConfirmDelete,
+  } = useMentalModelTable({ data, onEdit, onDelete });
 
   return (
     <>

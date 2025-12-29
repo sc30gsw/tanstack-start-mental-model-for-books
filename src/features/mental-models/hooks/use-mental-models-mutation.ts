@@ -57,5 +57,5 @@ export function useMentalModelMutations(
     collection.delete([id]);
   };
 
-  return { create, update, remove };
+  return { create, update, remove } as const;
 }

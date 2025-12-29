@@ -38,5 +38,5 @@ export function useMentalModelsQuery(userId: MentalModelModel.GetAllRequestParam
     [status, searchQuery, collection],
   );
 
-  return { mentalModels: data, collection };
+  return { mentalModels: data, collection } as const;
 }
