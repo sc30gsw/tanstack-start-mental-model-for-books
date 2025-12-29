@@ -164,7 +164,7 @@ export function MentalModelTable({ data, onEdit, onDelete }: MentalModelTablePro
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: (value: string) => navigate({ search: { search: value } }),
+    onGlobalFilterChange: (value: string) => navigate({ search: { ...search, search: value } }),
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

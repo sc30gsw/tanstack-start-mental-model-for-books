@@ -19,14 +19,14 @@ export function MentalModelSearchGroup() {
         placeholder="タイトルまたは著者で検索..."
         leftSection={<IconSearch size={16} />}
         value={globalFilter}
-        onChange={(e) => navigate({ search: { search: e.target.value } })}
+        onChange={(e) => navigate({ search: { ...search, search: e.target.value } })}
         w={250}
       />
       <Select
         placeholder="ステータス"
         value={status}
         onChange={(value) =>
-          navigate({ search: { status: value as MentalModelSearchParams["status"] } })
+          navigate({ search: { ...search, status: value as MentalModelSearchParams["status"] } })
         }
         data={[
           { value: "all", label: "すべて" },
