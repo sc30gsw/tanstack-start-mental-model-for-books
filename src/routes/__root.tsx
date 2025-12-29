@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-import { ClientOnly, HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
+import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { getAuth } from "@workos/authkit-tanstack-react-start";
 import { AuthKitProvider } from "@workos/authkit-tanstack-react-start/client";
@@ -72,9 +72,7 @@ function RootComponent() {
           <ColorSchemeContext.Provider value={{ colorScheme, setColorScheme }}>
             <MantineProvider theme={theme} defaultColorScheme={colorScheme}>
               <AppShell header={{ height: 60 }}>
-                <ClientOnly>
-                  <Header />
-                </ClientOnly>
+                <Header />
                 <AppShell.Main>
                   <Outlet />
                 </AppShell.Main>
