@@ -1,7 +1,8 @@
 import { Group, Select, TextInput } from "@mantine/core";
+import { useDebouncedValue } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
 import { getRouteApi } from "@tanstack/react-router";
-import React from "react";
+import { useEffect, useState } from "react";
 import type { MentalModelSearchParams } from "~/features/mental-models/types/schemas/search-params/search-schema";
 
 export function MentalModelSearchGroup() {
@@ -10,18 +11,11 @@ export function MentalModelSearchGroup() {
   const navigate = routeApi.useNavigate();
 
   const search = routeApi.useSearch();
-  const globalFilter = search.search ?? "";
   const status = search.status ?? "all";
 
   return (
     <Group gap="sm">
-      <TextInput
-        placeholder="タイトルまたは著者で検索..."
-        leftSection={<IconSearch size={16} />}
-        value={globalFilter}
-        onChange={(e) => navigate({ search: { ...search, search: e.target.value } })}
-        w={250}
-      />
+      <SearchTextInput />
       <Select
         placeholder="ステータス"
         value={status}
@@ -37,5 +31,37 @@ export function MentalModelSearchGroup() {
         clearable={false}
       />
     </Group>
+  );
+}
+
+function SearchTextInput() {
+  const routeApi = getRouteApi("/_authenticated/mental-models/");
+
+  const navigate = routeApi.useNavigate();
+
+  const search = routeApi.useSearch();
+  const globalFilter = search.search ?? "";
+
+  const [searchValue, setSearchValue] = useState(globalFilter);
+  const [debouncedSearch] = useDebouncedValue(searchValue, 300);
+
+  useEffect(() => {
+    setSearchValue(globalFilter);
+  }, [globalFilter]);
+
+  useEffect(() => {
+    if (debouncedSearch !== globalFilter) {
+      navigate({ search: { ...search, search: debouncedSearch } });
+    }
+  }, [debouncedSearch, globalFilter, navigate, search]);
+
+  return (
+    <TextInput
+      placeholder="タイトルまたは著者で検索..."
+      leftSection={<IconSearch size={16} />}
+      value={searchValue}
+      onChange={(e) => setSearchValue(e.target.value)}
+      w={250}
+    />
   );
 }
