@@ -2,7 +2,7 @@ import { config } from "dotenv";
 import { drizzle, LibSQLDatabase } from "drizzle-orm/libsql";
 import * as schema from "~/db/schema";
 
-class DatabaseError extends Error {
+export class DatabaseError extends Error {
   status = 500;
 
   constructor(message: string = "Database error occurred") {

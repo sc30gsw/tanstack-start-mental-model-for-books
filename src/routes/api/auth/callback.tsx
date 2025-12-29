@@ -34,8 +34,6 @@ export const Route = createFileRoute("/api/auth/callback")({
                 updatedAt: new Date(),
               },
             });
-
-          console.log("User authenticated and saved:", user.email);
         },
         onError: ({ error }) => {
           console.error("Authentication failed:", error);
