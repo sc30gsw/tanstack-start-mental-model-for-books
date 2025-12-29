@@ -22,6 +22,7 @@ import {
   Modal,
   Paper,
   Pagination,
+  ScrollArea,
 } from "@mantine/core";
 import {
   IconEye,
@@ -192,62 +193,68 @@ export function MentalModelTable({ data, onEdit, onDelete }: MentalModelTablePro
   return (
     <>
       <Paper withBorder radius="md" style={{ overflow: "hidden" }}>
-        <Table striped highlightOnHover>
-          <Table.Thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <Table.Tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <Table.Th
-                    key={header.id}
-                    style={{
-                      width: header.getSize() !== 150 ? header.getSize() : undefined,
-                      cursor: header.column.getCanSort() ? "pointer" : "default",
-                    }}
-                    onClick={header.column.getToggleSortingHandler()}
-                  >
-                    <Group gap="xs" wrap="nowrap">
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                      {header.column.getCanSort() && (
-                        <>
-                          {header.column.getIsSorted() === "asc" ? (
-                            <IconArrowUp size={14} />
-                          ) : header.column.getIsSorted() === "desc" ? (
-                            <IconArrowDown size={14} />
-                          ) : (
-                            <IconArrowsUpDown size={14} color="gray" />
-                          )}
-                        </>
-                      )}
-                    </Group>
-                  </Table.Th>
-                ))}
-              </Table.Tr>
-            ))}
-          </Table.Thead>
-          <Table.Tbody>
-            {table.getRowModel().rows.length === 0 ? (
-              <Table.Tr>
-                <Table.Td colSpan={columns.length} style={{ textAlign: "center", padding: "2rem" }}>
-                  <Text c="dimmed">
-                    {globalFilter || table.getColumn("status")?.getFilterValue()
-                      ? "条件に一致するメンタルモデルがありません"
-                      : "メンタルモデルがありません。新規作成してください。"}
-                  </Text>
-                </Table.Td>
-              </Table.Tr>
-            ) : (
-              table.getRowModel().rows.map((row) => (
-                <Table.Tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <Table.Td key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </Table.Td>
+        <ScrollArea type="scroll">
+          <Table striped highlightOnHover>
+            <Table.Thead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <Table.Tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <Table.Th
+                      key={header.id}
+                      style={{
+                        width: header.getSize() !== 150 ? header.getSize() : undefined,
+                        cursor: header.column.getCanSort() ? "pointer" : "default",
+                        whiteSpace: "nowrap",
+                      }}
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      <Group gap="xs" wrap="nowrap">
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {header.column.getCanSort() && (
+                          <>
+                            {header.column.getIsSorted() === "asc" ? (
+                              <IconArrowUp size={14} />
+                            ) : header.column.getIsSorted() === "desc" ? (
+                              <IconArrowDown size={14} />
+                            ) : (
+                              <IconArrowsUpDown size={14} color="gray" />
+                            )}
+                          </>
+                        )}
+                      </Group>
+                    </Table.Th>
                   ))}
                 </Table.Tr>
-              ))
-            )}
-          </Table.Tbody>
-        </Table>
+              ))}
+            </Table.Thead>
+            <Table.Tbody>
+              {table.getRowModel().rows.length === 0 ? (
+                <Table.Tr>
+                  <Table.Td
+                    colSpan={columns.length}
+                    style={{ textAlign: "center", padding: "2rem" }}
+                  >
+                    <Text c="dimmed">
+                      {globalFilter || table.getColumn("status")?.getFilterValue()
+                        ? "条件に一致するメンタルモデルがありません"
+                        : "メンタルモデルがありません。新規作成してください。"}
+                    </Text>
+                  </Table.Td>
+                </Table.Tr>
+              ) : (
+                table.getRowModel().rows.map((row) => (
+                  <Table.Tr key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <Table.Td key={cell.id} style={{ whiteSpace: "nowrap" }}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </Table.Td>
+                    ))}
+                  </Table.Tr>
+                ))
+              )}
+            </Table.Tbody>
+          </Table>
+        </ScrollArea>
       </Paper>
 
       {table.getPageCount() > 1 && (
