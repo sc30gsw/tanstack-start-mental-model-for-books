@@ -1,6 +1,5 @@
 import { createTheme, type MantineColorsTuple } from "@mantine/core";
 
-// Custom color palette for reading/learning app
 const blue = [
   "#e7f5ff",
   "#d0ebff",
