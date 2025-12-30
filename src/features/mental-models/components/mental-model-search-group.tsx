@@ -1,4 +1,4 @@
-import { Group, Select, TextInput } from "@mantine/core";
+import { Group, Select, TextInput, Switch } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
 import { getRouteApi } from "@tanstack/react-router";
@@ -10,7 +10,7 @@ export function MentalModelSearchGroup() {
     <Group gap="sm">
       <SearchTextInput />
       <StatusSelect />
-      <LikedSelect />
+      <LikedOnlySwitch />
     </Group>
   );
 }
@@ -73,27 +73,26 @@ function StatusSelect() {
   );
 }
 
-function LikedSelect() {
+function LikedOnlySwitch() {
   const routeApi = getRouteApi("/_authenticated/mental-models/");
 
   const navigate = routeApi.useNavigate();
 
   const search = routeApi.useSearch();
-  const liked = search.liked ?? "all";
+  const likedOnly = search.likedOnly ?? false;
 
   return (
-    <Select
-      placeholder="いいね"
-      value={liked}
-      onChange={(value) =>
-        navigate({ search: { ...search, liked: value as MentalModelSearchParams["liked"] } })
-      }
-      data={[
-        { value: "all", label: "すべて" },
-        { value: "liked", label: "いいね済み" },
-      ]}
-      w={120}
-      clearable={false}
+    <Switch
+      label="いいねしたメンタルモデルのみ"
+      checked={likedOnly}
+      onChange={(e) => {
+        navigate({
+          search: {
+            ...search,
+            likedOnly: e.currentTarget.checked,
+          },
+        });
+      }}
     />
   );
 }

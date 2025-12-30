@@ -1,7 +1,10 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { ActionIcon, Image, Text, Badge, Group, Tooltip } from "@mantine/core";
-import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { IconEdit, IconTrash, IconHeart, IconHeartFilled } from "@tabler/icons-react";
 import type { MentalModelModel } from "~/features/mental-models/api/model";
+import { useAuth } from "@workos/authkit-tanstack-react-start/client";
+import { mentalModelsCollection } from "~/features/mental-models/mental-models-collections";
+import { api } from "~/lib/rpc";
 
 const columnHelper = createColumnHelper<MentalModelModel.response>();
 
@@ -11,7 +14,91 @@ type UseColumnsParams = {
 };
 
 export function useMentalModelTableColumns({ onEdit, onOpenDelete }: UseColumnsParams) {
+  const { user } = useAuth();
+
+  const handleToggleLike = async (e: React.MouseEvent, mentalModel: MentalModelModel.response) => {
+    e.stopPropagation();
+
+    if (!user) {
+      return;
+    }
+
+    try {
+      const isLiked = mentalModel.likedByCurrentUser;
+
+      mentalModelsCollection.update(mentalModel.id, (draft) => {
+        draft.likedByCurrentUser = !isLiked;
+        draft.likesCount = isLiked
+          ? Math.max((draft.likesCount ?? 0) - 1, 0)
+          : (draft.likesCount ?? 0) + 1;
+      });
+
+      if (isLiked) {
+        const response = await api["likes"]
+          ["mental-models"]({
+            mentalModelId: mentalModel.id,
+          })
+          .delete(undefined, {
+            headers: { authorization: user.id },
+          });
+
+        if (response.status !== 200) {
+          mentalModelsCollection.update(mentalModel.id, (draft) => {
+            draft.likedByCurrentUser = isLiked;
+            draft.likesCount = mentalModel.likesCount;
+          });
+
+          throw new Error(response.error?.value?.message || "Failed to delete like");
+        }
+      } else {
+        const response = await api["likes"]
+          ["mental-models"]({
+            mentalModelId: mentalModel.id,
+          })
+          .post(undefined, {
+            headers: { authorization: user.id },
+          });
+
+        if (response.status !== 200) {
+          mentalModelsCollection.update(mentalModel.id, (draft) => {
+            draft.likedByCurrentUser = isLiked;
+            draft.likesCount = mentalModel.likesCount;
+          });
+
+          throw new Error(response.error?.value?.message || "Failed to create like");
+        }
+      }
+    } catch (error) {
+      console.error("Failed to toggle like:", error);
+    }
+  };
+
   return [
+    columnHelper.display({
+      id: "like",
+      header: "",
+      cell: ({ row }) => {
+        const mentalModel = row.original;
+        return (
+          <Tooltip label={mentalModel.likedByCurrentUser ? "いいねを解除" : "いいね"}>
+            <ActionIcon
+              variant="subtle"
+              color={mentalModel.likedByCurrentUser ? "red" : "gray"}
+              onClick={(e) => handleToggleLike(e, mentalModel)}
+              disabled={!user}
+            >
+              {mentalModel.likedByCurrentUser ? (
+                <IconHeartFilled size={16} />
+              ) : (
+                <IconHeart size={16} />
+              )}
+            </ActionIcon>
+          </Tooltip>
+        );
+      },
+      enableSorting: false,
+      size: 50,
+    }),
     columnHelper.accessor("book.thumbnailUrl", {
       id: "thumbnail",
       header: "",
