@@ -27,6 +27,11 @@ export namespace LikeModel {
     "mentalModelId" | "userId"
   >;
 
+  export type listParams = Pick<typeof likeInsertSchema.static, "userId">;
+
+  export const listResponse = t.Array(response);
+  export type listResponse = typeof listResponse.static;
+
   export const databaseError = t.Object({
     error: t.String(),
     code: t.Literal("DATABASE_ERROR"),

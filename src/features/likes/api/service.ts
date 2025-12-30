@@ -4,7 +4,6 @@ import { mentalModels, likes } from "~/db/schema";
 import { MentalModelNotFoundError } from "~/features/mental-models/api/errors";
 import { LikeNotFoundError } from "./errors";
 import type { LikeModel } from "./model";
-import type { MentalModelModel } from "~/features/mental-models/api/model";
 
 export abstract class LikeService {
   static async create(params: LikeModel.CreateRequestParams) {
@@ -85,7 +84,9 @@ export abstract class LikeService {
     }
   }
 
-  static async getLikedMentalModels(userId: string): Promise<MentalModelModel.response[]> {
+  static async getLikedMentalModels(params: LikeModel.listParams) {
+    const { userId } = params;
+
     try {
       const db = getDb();
 

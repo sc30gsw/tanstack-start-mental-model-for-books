@@ -3,6 +3,7 @@ import { LikeModel } from "./model";
 import { LikeService } from "./service";
 import { LikeNotFoundError } from "./errors";
 import { MentalModelNotFoundError } from "~/features/mental-models/api/errors";
+import { MentalModelModel } from "~/features/mental-models/api/model";
 import { sessionMiddleware } from "~/lib/session-middleware";
 
 export const likesPlugin = new Elysia({ prefix: "/likes", name: "likes" })
@@ -76,10 +77,10 @@ export const likesPlugin = new Elysia({ prefix: "/likes", name: "likes" })
   .get(
     "/mental-models",
     async ({ user }) => {
-      return await LikeService.getLikedMentalModels(user.id);
+      return await LikeService.getLikedMentalModels({ userId: user.id });
     },
     {
-      response: t.Array(t.Any()),
+      response: MentalModelModel.listResponse,
       detail: {
         tags: ["Likes"],
         summary: "Get liked mental models",
