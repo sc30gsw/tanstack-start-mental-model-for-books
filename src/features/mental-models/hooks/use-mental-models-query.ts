@@ -39,7 +39,6 @@ export function useMentalModelsQuery() {
     },
     [status, searchQuery, likedOnly],
   );
-  console.log("🚀 ~ useMentalModelsQuery ~ data:", data);
 
   return { mentalModels: data } as const;
 }
