@@ -1,7 +1,18 @@
 import { Suspense, useState } from "react";
 import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
 import { valibotValidator } from "@tanstack/valibot-adapter";
-import { Container, Title, Stack, Loader, Center, Text, Group, Button } from "@mantine/core";
+import {
+  Container,
+  Title,
+  Stack,
+  Text,
+  Group,
+  Button,
+  Paper,
+  ScrollArea,
+  Table,
+  Skeleton,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { MentalModelTable } from "~/features/mental-models/components/mental-model-table";
 import { useMentalModelsQuery } from "~/features/mental-models/hooks/use-mental-models-query";
@@ -19,6 +30,8 @@ import type {
   MentalModelUpdateData,
 } from "~/features/mental-models/types/schemas/mental-model-schema";
 import { useAuth } from "@workos/authkit-tanstack-react-start/client";
+import { ErrorComponent } from "~/components/error";
+import { PendingComponent } from "~/components/pending";
 
 export const Route = createFileRoute("/_authenticated/mental-models/")({
   ssr: false,
@@ -27,23 +40,12 @@ export const Route = createFileRoute("/_authenticated/mental-models/")({
   search: {
     middlewares: [stripSearchParams(mentalModelDefaultSearchParams)],
   },
+  pendingComponent: PendingComponent,
+  errorComponent: ErrorComponent,
 });
 
 function MentalModelsPage() {
   return <MentalModelsPageContentContainer />;
-}
-
-function LoadingFallback() {
-  return (
-    <Container size="xl" py="xl">
-      <Center h={400}>
-        <Stack align="center" gap="md">
-          <Loader size="lg" />
-          <Text c="dimmed">読み込み中...</Text>
-        </Stack>
-      </Center>
-    </Container>
-  );
 }
 
 function MentalModelsPageContentContainer() {
@@ -53,9 +55,7 @@ function MentalModelsPageContentContainer() {
         <Title order={1}>読書メンタルモデル</Title>
         <Text c="dimmed">読書の前に目的を明確にし、より効果的な学習を実現しましょう。</Text>
 
-        <Suspense fallback={<LoadingFallback />}>
-          <MentalModelsPageContent />
-        </Suspense>
+        <MentalModelsPageContent />
       </Stack>
     </Container>
   );
@@ -128,7 +128,69 @@ function MentalModelsPageContent() {
           新規作成
         </Button>
       </Group>
-      <MentalModelTableContainer onOpenEditModal={handleOpenEditModal} />
+      <Suspense
+        fallback={
+          <Paper withBorder radius="md" style={{ overflow: "hidden" }}>
+            <ScrollArea type="scroll">
+              <Table striped>
+                <Table.Thead>
+                  <Table.Tr>
+                    <Table.Th style={{ width: 50 }} />
+                    <Table.Th style={{ width: 60 }} />
+                    <Table.Th>
+                      <Skeleton height={20} width={80} />
+                    </Table.Th>
+                    <Table.Th>
+                      <Skeleton height={20} width={60} />
+                    </Table.Th>
+                    <Table.Th>
+                      <Skeleton height={20} width={100} />
+                    </Table.Th>
+                    <Table.Th>
+                      <Skeleton height={20} width={90} />
+                    </Table.Th>
+                    <Table.Th>
+                      <Skeleton height={20} width={40} />
+                    </Table.Th>
+                  </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <Table.Tr key={index}>
+                      <Table.Td>
+                        <Skeleton height={24} width={24} circle />
+                      </Table.Td>
+                      <Table.Td>
+                        <Skeleton height={60} width={40} radius="xs" />
+                      </Table.Td>
+                      <Table.Td>
+                        <Skeleton height={16} width={200} />
+                      </Table.Td>
+                      <Table.Td>
+                        <Skeleton height={16} width={120} />
+                      </Table.Td>
+                      <Table.Td>
+                        <Skeleton height={16} width={60} radius="xl" />
+                      </Table.Td>
+                      <Table.Td>
+                        <Skeleton height={16} width={100} />
+                      </Table.Td>
+                      <Table.Td>
+                        <Group gap="lg" wrap="nowrap">
+                          <Skeleton height={16} width={24} circle />
+                          <Skeleton height={16} width={24} circle />
+                        </Group>
+                      </Table.Td>
+                    </Table.Tr>
+                  ))}
+                </Table.Tbody>
+              </Table>
+            </ScrollArea>
+          </Paper>
+        }
+      >
+        <MentalModelTableContainer onOpenEditModal={handleOpenEditModal} />
+      </Suspense>
       <MentalModelModal
         opened={modalOpened}
         onClose={handleCloseModal}

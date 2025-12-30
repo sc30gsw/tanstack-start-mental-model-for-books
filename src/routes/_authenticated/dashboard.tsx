@@ -1,9 +1,13 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useAuth } from "@workos/authkit-tanstack-react-start/client";
 import { Avatar, Badge, Button, Card, Container, Group, Stack, Text, Title } from "@mantine/core";
+import { PendingComponent } from "~/components/pending";
+import { ErrorComponent } from "~/components/error";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
+  pendingComponent: PendingComponent,
+  errorComponent: ErrorComponent,
 });
 
 function DashboardPage() {

@@ -9,6 +9,8 @@ import {
   type UserSearchParams,
 } from "~/features/users/types/schema/search-params/user-search-schema";
 import { getAuth } from "@workos/authkit-tanstack-react-start";
+import { PendingComponent } from "~/components/pending";
+import { ErrorComponent } from "~/components/error";
 
 export const Route = createFileRoute("/_authenticated/users/$userId")({
   component: UserPage,
@@ -26,6 +28,8 @@ export const Route = createFileRoute("/_authenticated/users/$userId")({
 
     return { user };
   },
+  pendingComponent: PendingComponent,
+  errorComponent: ErrorComponent,
 });
 
 function UserPage() {

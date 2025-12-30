@@ -2,6 +2,8 @@ import { Link, createFileRoute, redirect } from "@tanstack/react-router";
 import { getAuth, getSignInUrl } from "@workos/authkit-tanstack-react-start";
 import { Button, Container, Group, Stack, Text, Title, Card, Avatar } from "@mantine/core";
 import { IconBook, IconBrain, IconArrowRight } from "@tabler/icons-react";
+import { PendingComponent } from "~/components/pending";
+import { ErrorComponent } from "~/components/error";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -15,6 +17,8 @@ export const Route = createFileRoute("/")({
     return { user };
   },
   component: Home,
+  pendingComponent: PendingComponent,
+  errorComponent: ErrorComponent,
 });
 
 function Home() {
