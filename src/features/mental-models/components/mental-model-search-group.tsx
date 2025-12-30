@@ -3,7 +3,7 @@ import { useDebouncedValue } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
 import { getRouteApi } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import type { MentalModelSearchParams } from "~/features/mental-models/types/schemas/search-params/search-schema";
+import type { MentalModelSearchParams } from "~/features/mental-models/types/schemas/search-params/mental-model-search-schema";
 
 export function MentalModelSearchGroup() {
   return (
