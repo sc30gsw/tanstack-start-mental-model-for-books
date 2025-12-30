@@ -7,7 +7,6 @@ const bookSelectSchema = createSelectSchema(books);
 const bookInsertSchema = createInsertSchema(books);
 
 export namespace BookModel {
-  // Create body - pick only the fields needed for creation
   export const createBody = t.Pick(bookInsertSchema, [
     "googleBookId",
     "title",
@@ -52,9 +51,7 @@ export namespace BookModel {
   export type validationError = typeof validationError.static;
 }
 
-// Google Books API response schemas
 export namespace GoogleBooksModel {
-  // Google Books API types
   export type GoogleBooksVolume = {
     id: string;
     volumeInfo: {

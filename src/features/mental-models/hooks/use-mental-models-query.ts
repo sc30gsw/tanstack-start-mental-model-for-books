@@ -8,6 +8,7 @@ export function useMentalModelsQuery() {
   const search = routeApi.useSearch();
   const status = search.status;
   const searchQuery = search.search ?? "";
+  const likedOnly = search.likedOnly ?? false;
 
   const { data } = useLiveSuspenseQuery(
     (q) => {
@@ -15,6 +16,10 @@ export function useMentalModelsQuery() {
 
       if (status && status !== "all") {
         query = query.where(({ mentalModels }) => eq(mentalModels.status, status));
+      }
+
+      if (likedOnly) {
+        query = query.where(({ mentalModels }) => eq(mentalModels.likedByCurrentUser, true));
       }
 
       if (searchQuery.trim() !== "") {
@@ -32,7 +37,7 @@ export function useMentalModelsQuery() {
 
       return query;
     },
-    [status, searchQuery],
+    [status, searchQuery, likedOnly],
   );
 
   return { mentalModels: data } as const;

@@ -35,7 +35,7 @@ export const mentalModelsPlugin = new Elysia({ prefix: "/mental-models", name: "
   .get(
     "/",
     async ({ user }) => {
-      return await MentalModelService.getAll({ userId: user.id });
+      return await MentalModelService.getAll({ userId: user.id, currentUserId: user.id });
     },
     {
       response: MentalModelModel.listResponse,
@@ -49,7 +49,11 @@ export const mentalModelsPlugin = new Elysia({ prefix: "/mental-models", name: "
   .get(
     "/:id",
     async ({ params, user }) => {
-      return await MentalModelService.getById({ id: params.id, userId: user.id });
+      return await MentalModelService.getById({
+        id: params.id,
+        userId: user.id,
+        currentUserId: user.id,
+      });
     },
     {
       params: MentalModelModel.params,

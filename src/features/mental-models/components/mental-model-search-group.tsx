@@ -1,15 +1,16 @@
-import { Group, Select, TextInput } from "@mantine/core";
+import { Group, Select, TextInput, Switch } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
 import { getRouteApi } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import type { MentalModelSearchParams } from "~/features/mental-models/types/schemas/search-params/search-schema";
+import type { MentalModelSearchParams } from "~/features/mental-models/types/schemas/search-params/mental-model-search-schema";
 
 export function MentalModelSearchGroup() {
   return (
     <Group gap="sm">
       <SearchTextInput />
       <StatusSelect />
+      <LikedOnlySwitch />
     </Group>
   );
 }
@@ -68,6 +69,30 @@ function StatusSelect() {
       ]}
       w={120}
       clearable={false}
+    />
+  );
+}
+
+function LikedOnlySwitch() {
+  const routeApi = getRouteApi("/_authenticated/mental-models/");
+
+  const navigate = routeApi.useNavigate();
+
+  const search = routeApi.useSearch();
+  const likedOnly = search.likedOnly ?? false;
+
+  return (
+    <Switch
+      label="いいねしたメンタルモデルのみ"
+      checked={likedOnly}
+      onChange={(e) => {
+        navigate({
+          search: {
+            ...search,
+            likedOnly: e.currentTarget.checked,
+          },
+        });
+      }}
     />
   );
 }

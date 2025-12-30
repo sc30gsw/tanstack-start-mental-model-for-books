@@ -56,5 +56,6 @@ export const mentalModelUpdateSchema = v.object({
 });
 
 export type MentalModelFormData = v.InferOutput<typeof mentalModelFormSchema>;
+export type MentalModelFormValues = v.InferOutput<typeof mentalModelFormSchemaForForm>;
 export type MentalModelUpdateData = v.InferOutput<typeof mentalModelUpdateSchema>;
 export type MentalModelStatus = v.InferOutput<typeof mentalModelStatusSchema>;

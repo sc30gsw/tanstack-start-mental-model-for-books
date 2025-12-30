@@ -5,9 +5,9 @@ import { MentalModelNotFoundError, BookNotFoundError } from "~/features/mental-m
 import type { MentalModelModel } from "~/features/mental-models/api/model";
 
 export abstract class MentalModelService {
-  static async getAll(params: MentalModelModel.GetAllRequestParams) {
+  static async getAll(params: MentalModelModel.GetAllRequestParams & { currentUserId?: string }) {
     try {
-      const { userId } = params;
+      const { userId, currentUserId } = params;
 
       const db = getDb();
 
@@ -16,17 +16,24 @@ export abstract class MentalModelService {
         orderBy: [mentalModels.createdAt],
         with: {
           book: true,
+          likes: true,
         },
       });
 
       return results.map((row) => {
         const { createdAt: _, ...bookWithoutCreatedAt } = row.book;
+        const likesCount = row.likes?.length ?? 0;
+        const likedByCurrentUser = currentUserId
+          ? (row.likes?.some((like) => like.userId === currentUserId) ?? false)
+          : false;
 
         return {
           ...row,
           createdAt: row.createdAt.toISOString(),
           updatedAt: row.updatedAt.toISOString(),
           book: bookWithoutCreatedAt,
+          likedByCurrentUser,
+          likesCount,
         };
       });
     } catch (error) {
@@ -40,9 +47,9 @@ export abstract class MentalModelService {
     }
   }
 
-  static async getById(params: MentalModelModel.GetByIdRequestParams) {
+  static async getById(params: MentalModelModel.GetByIdRequestParams & { currentUserId?: string }) {
     try {
-      const { id, userId } = params;
+      const { id, userId, currentUserId } = params;
 
       const db = getDb();
 
@@ -50,6 +57,7 @@ export abstract class MentalModelService {
         where: and(eq(mentalModels.id, id), eq(mentalModels.userId, userId)),
         with: {
           book: true,
+          likes: true,
         },
       });
 
@@ -58,12 +66,18 @@ export abstract class MentalModelService {
       }
 
       const { createdAt: _, ...bookWithoutCreatedAt } = results.book;
+      const likesCount = results.likes?.length ?? 0;
+      const likedByCurrentUser = currentUserId
+        ? (results.likes?.some((like) => like.userId === currentUserId) ?? false)
+        : false;
 
       return {
         ...results,
         createdAt: results.createdAt.toISOString(),
         updatedAt: results.updatedAt.toISOString(),
         book: bookWithoutCreatedAt,
+        likedByCurrentUser,
+        likesCount,
       };
     } catch (error) {
       if (error instanceof MentalModelNotFoundError || error instanceof BookNotFoundError) {
