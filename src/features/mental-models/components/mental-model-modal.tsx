@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import {
   Modal,
   Stack,
@@ -11,6 +11,7 @@ import {
   Title,
   Divider,
   ActionIcon,
+  Skeleton,
 } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import { useAppForm } from "~/hooks/use-form";
@@ -38,6 +39,8 @@ type MentalModelModalProps = {
       | { id: MentalModelModel.response["id"]; data: MentalModelUpdateData },
   ) => Promise<void>;
   mentalModel?: MentalModelModel.response | null;
+  activeTab: "basic" | "actionPlans";
+  onTabChange: (tab: "basic" | "actionPlans") => void;
 };
 
 export function MentalModelModal({
@@ -45,6 +48,8 @@ export function MentalModelModal({
   onClose,
   onSubmit,
   mentalModel,
+  activeTab,
+  onTabChange,
 }: MentalModelModalProps) {
   const isEditing = !!mentalModel;
   const { user } = useAuth();
@@ -53,36 +58,20 @@ export function MentalModelModal({
   const [savedBookId, setSavedBookId] = useState<
     GoogleBooksModel.BookSearchResult["googleBookId"] | null
   >(null);
-  const [activeTab, setActiveTab] = useState<"basic" | "actionPlans">(
-    isEditing && mentalModel?.status === "completed" ? "actionPlans" : "basic",
-  );
 
   const form = useAppForm({
-    defaultValues: mentalModel
-      ? {
-          status: mentalModel.status,
-          whyReadAnswer1: mentalModel.whyReadAnswer1,
-          whyReadAnswer2: mentalModel.whyReadAnswer2,
-          whyReadAnswer3: mentalModel.whyReadAnswer3,
-          whatToGainAnswer1: mentalModel.whatToGainAnswer1,
-          whatToGainAnswer2: mentalModel.whatToGainAnswer2,
-          whatToGainAnswer3: mentalModel.whatToGainAnswer3,
-          goalAfterReadingAnswer1: mentalModel.goalAfterReadingAnswer1,
-          goalAfterReadingAnswer2: mentalModel.goalAfterReadingAnswer2,
-          goalAfterReadingAnswer3: mentalModel.goalAfterReadingAnswer3,
-        }
-      : {
-          status: "reading" as "reading" | "completed",
-          whyReadAnswer1: "",
-          whyReadAnswer2: "",
-          whyReadAnswer3: "",
-          whatToGainAnswer1: "",
-          whatToGainAnswer2: "",
-          whatToGainAnswer3: "",
-          goalAfterReadingAnswer1: "",
-          goalAfterReadingAnswer2: "",
-          goalAfterReadingAnswer3: "",
-        },
+    defaultValues: {
+      status: mentalModel?.status ?? "reading",
+      whyReadAnswer1: mentalModel?.whyReadAnswer1 ?? "",
+      whyReadAnswer2: mentalModel?.whyReadAnswer2 ?? "",
+      whyReadAnswer3: mentalModel?.whyReadAnswer3 ?? "",
+      whatToGainAnswer1: mentalModel?.whatToGainAnswer1 ?? "",
+      whatToGainAnswer2: mentalModel?.whatToGainAnswer2 ?? "",
+      whatToGainAnswer3: mentalModel?.whatToGainAnswer3 ?? "",
+      goalAfterReadingAnswer1: mentalModel?.goalAfterReadingAnswer1 ?? "",
+      goalAfterReadingAnswer2: mentalModel?.goalAfterReadingAnswer2 ?? "",
+      goalAfterReadingAnswer3: mentalModel?.goalAfterReadingAnswer3 ?? "",
+    },
     validators: {
       onChange: mentalModelFormSchemaForForm,
     },
@@ -124,9 +113,9 @@ export function MentalModelModal({
       }
 
       form.reset();
-      onClose();
       setSelectedBook(null);
       setSavedBookId(null);
+      onClose();
     },
   });
 
@@ -140,7 +129,9 @@ export function MentalModelModal({
     setSavedBookId(null);
   };
 
-  const canAccessActionPlans = form.state.values.status === "completed";
+  const canAccessActionPlans = isEditing
+    ? activeTab === "actionPlans"
+    : form.state.values.status === "completed";
 
   const handleStatusChange = (value: string | null) => {
     const newStatus = (value as "reading" | "completed") ?? "reading";
@@ -148,15 +139,16 @@ export function MentalModelModal({
 
     switch (newStatus) {
       case "reading":
-        setActiveTab("basic");
+        onTabChange("basic");
         break;
 
       case "completed":
         if (isEditing) {
-          setActiveTab("actionPlans");
+          onTabChange("actionPlans");
         } else {
-          setActiveTab("basic");
+          onTabChange("basic");
         }
+
         break;
     }
   };
@@ -245,7 +237,7 @@ export function MentalModelModal({
 
             <ModalTabs
               activeTab={activeTab}
-              onTabChange={setActiveTab}
+              onTabChange={onTabChange}
               isEditing={isEditing}
               canAccessActionPlans={canAccessActionPlans || activeTab === "actionPlans"}
             />
@@ -257,7 +249,29 @@ export function MentalModelModal({
             {activeTab === "actionPlans" &&
               isEditing &&
               (mentalModel.status === "completed" || form.state.values.status === "completed") && (
-                <ActionPlansTab mentalModelId={mentalModel.id} />
+                <Suspense
+                  fallback={
+                    <Stack gap="md">
+                      <Skeleton height={28} width={150} />
+                      <Skeleton height={20} width={300} />
+                      <Stack gap="sm">
+                        <Skeleton height={30} />
+                        <Skeleton height={30} />
+                        <Skeleton height={30} />
+                      </Stack>
+                      <Card withBorder p="sm">
+                        <Stack gap="xs">
+                          <Skeleton height={80} />
+                          <Group justify="flex-end">
+                            <Skeleton height={36} width={80} />
+                          </Group>
+                        </Stack>
+                      </Card>
+                    </Stack>
+                  }
+                >
+                  <ActionPlansTab mentalModelId={mentalModel.id} />
+                </Suspense>
               )}
 
             <Divider />

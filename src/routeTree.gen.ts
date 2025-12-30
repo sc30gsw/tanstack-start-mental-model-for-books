@@ -16,6 +16,7 @@ import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedMentalModelsIndexRouteImport } from './routes/_authenticated/mental-models/index'
 import { Route as ApiAuthCallbackRouteImport } from './routes/api/auth/callback'
+import { Route as AuthenticatedUsersUserIdRouteImport } from './routes/_authenticated/users/$userId'
 
 const LogoutRoute = LogoutRouteImport.update({
   id: '/logout',
@@ -52,12 +53,19 @@ const ApiAuthCallbackRoute = ApiAuthCallbackRouteImport.update({
   path: '/api/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedUsersUserIdRoute =
+  AuthenticatedUsersUserIdRouteImport.update({
+    id: '/users/$userId',
+    path: '/users/$userId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/logout': typeof LogoutRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/api/$': typeof ApiSplatRoute
+  '/users/$userId': typeof AuthenticatedUsersUserIdRoute
   '/api/auth/callback': typeof ApiAuthCallbackRoute
   '/mental-models': typeof AuthenticatedMentalModelsIndexRoute
 }
@@ -66,6 +74,7 @@ export interface FileRoutesByTo {
   '/logout': typeof LogoutRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/api/$': typeof ApiSplatRoute
+  '/users/$userId': typeof AuthenticatedUsersUserIdRoute
   '/api/auth/callback': typeof ApiAuthCallbackRoute
   '/mental-models': typeof AuthenticatedMentalModelsIndexRoute
 }
@@ -76,6 +85,7 @@ export interface FileRoutesById {
   '/logout': typeof LogoutRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/api/$': typeof ApiSplatRoute
+  '/_authenticated/users/$userId': typeof AuthenticatedUsersUserIdRoute
   '/api/auth/callback': typeof ApiAuthCallbackRoute
   '/_authenticated/mental-models/': typeof AuthenticatedMentalModelsIndexRoute
 }
@@ -86,6 +96,7 @@ export interface FileRouteTypes {
     | '/logout'
     | '/dashboard'
     | '/api/$'
+    | '/users/$userId'
     | '/api/auth/callback'
     | '/mental-models'
   fileRoutesByTo: FileRoutesByTo
@@ -94,6 +105,7 @@ export interface FileRouteTypes {
     | '/logout'
     | '/dashboard'
     | '/api/$'
+    | '/users/$userId'
     | '/api/auth/callback'
     | '/mental-models'
   id:
@@ -103,6 +115,7 @@ export interface FileRouteTypes {
     | '/logout'
     | '/_authenticated/dashboard'
     | '/api/$'
+    | '/_authenticated/users/$userId'
     | '/api/auth/callback'
     | '/_authenticated/mental-models/'
   fileRoutesById: FileRoutesById
@@ -166,16 +179,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/users/$userId': {
+      id: '/_authenticated/users/$userId'
+      path: '/users/$userId'
+      fullPath: '/users/$userId'
+      preLoaderRoute: typeof AuthenticatedUsersUserIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedUsersUserIdRoute: typeof AuthenticatedUsersUserIdRoute
   AuthenticatedMentalModelsIndexRoute: typeof AuthenticatedMentalModelsIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedUsersUserIdRoute: AuthenticatedUsersUserIdRoute,
   AuthenticatedMentalModelsIndexRoute: AuthenticatedMentalModelsIndexRoute,
 }
 

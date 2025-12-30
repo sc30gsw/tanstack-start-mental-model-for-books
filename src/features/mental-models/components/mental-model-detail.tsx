@@ -1,22 +1,17 @@
-import {
-  Card,
-  Stack,
-  Group,
-  Image,
-  Text,
-  Title,
-  Badge,
-  Divider,
-  List,
-  ThemeIcon,
-} from "@mantine/core";
-import { IconBook, IconBulb, IconTarget, IconCircleCheck } from "@tabler/icons-react";
+import { Suspense, useState } from "react";
+import { Card, Stack, Group, Image, Text, Title, Badge, Divider, Skeleton } from "@mantine/core";
+import { IconBook, IconBulb, IconTarget } from "@tabler/icons-react";
 import type { MentalModelModel } from "~/features/mental-models/api/model";
+import { ActionPlansTab } from "~/features/mental-models/components/action-plans-tab";
+import { MentalModelQuestionSection } from "~/features/mental-models/components/mental-model-question-section";
+import { DetailModalTabs } from "~/features/mental-models/components/detail-modal-tabs";
 
 export function MentalModelDetail({
   mentalModel,
 }: Record<"mentalModel", MentalModelModel.response>) {
   const { book } = mentalModel;
+  const [activeTab, setActiveTab] = useState<"detail" | "actionPlans">("detail");
+  const canAccessActionPlans = mentalModel.status === "completed";
 
   const getAnswerList = (answers: string[]) => {
     return answers.filter((a) => a.trim() !== "");
@@ -75,96 +70,65 @@ export function MentalModelDetail({
         </Group>
       </Card>
 
+      {/* Tabs */}
+      {canAccessActionPlans && (
+        <>
+          <Divider />
+          <DetailModalTabs activeTab={activeTab} onTabChange={setActiveTab} />
+        </>
+      )}
+
       <Divider />
 
-      {/* Q1: Why read this book? */}
-      <Card withBorder p="md">
-        <Group gap="xs" mb="sm">
-          <ThemeIcon color="blue" variant="light" size="md">
-            <IconBook size={16} />
-          </ThemeIcon>
-          <Title order={5}>なぜこの本を読もうと思ったか？</Title>
-        </Group>
-        {whyReadAnswers.length > 0 ? (
-          <List
-            spacing="xs"
-            size="sm"
-            icon={
-              <ThemeIcon color="blue" size={20} radius="xl" variant="light">
-                <IconCircleCheck size={12} />
-              </ThemeIcon>
-            }
-          >
-            {whyReadAnswers.map((answer, index) => (
-              <List.Item key={index}>{answer}</List.Item>
-            ))}
-          </List>
-        ) : (
-          <Text size="sm" c="dimmed" fs="italic">
-            回答なし
-          </Text>
-        )}
-      </Card>
+      {activeTab === "detail" && (
+        <Stack gap="md">
+          <MentalModelQuestionSection
+            icon={<IconBook size={16} />}
+            title="なぜこの本を読もうと思ったか？"
+            answers={whyReadAnswers}
+            iconColor="blue"
+          />
+          <MentalModelQuestionSection
+            icon={<IconBulb size={16} />}
+            title="この本から何が得られそうか？"
+            answers={whatToGainAnswers}
+            iconColor="yellow"
+          />
+          <MentalModelQuestionSection
+            icon={<IconTarget size={16} />}
+            title="この本を読んだ後どうなっていたいか？"
+            answers={goalAfterReadingAnswers}
+            iconColor="green"
+          />
+        </Stack>
+      )}
 
-      {/* Q2: What to gain from this book? */}
-      <Card withBorder p="md">
-        <Group gap="xs" mb="sm">
-          <ThemeIcon color="yellow" variant="light" size="md">
-            <IconBulb size={16} />
-          </ThemeIcon>
-          <Title order={5}>この本から何が得られそうか？</Title>
-        </Group>
-        {whatToGainAnswers.length > 0 ? (
-          <List
-            spacing="xs"
-            size="sm"
-            icon={
-              <ThemeIcon color="yellow" size={20} radius="xl" variant="light">
-                <IconCircleCheck size={12} />
-              </ThemeIcon>
-            }
-          >
-            {whatToGainAnswers.map((answer, index) => (
-              <List.Item key={index}>{answer}</List.Item>
-            ))}
-          </List>
-        ) : (
-          <Text size="sm" c="dimmed" fs="italic">
-            回答なし
-          </Text>
-        )}
-      </Card>
+      {activeTab === "actionPlans" && canAccessActionPlans && (
+        <Suspense
+          fallback={
+            <Stack gap="md">
+              <Skeleton height={28} width={150} />
+              <Skeleton height={20} width={300} />
+              <Stack gap="sm">
+                <Skeleton height={30} />
+                <Skeleton height={30} />
+                <Skeleton height={30} />
+              </Stack>
+              <Card withBorder p="sm">
+                <Stack gap="xs">
+                  <Skeleton height={80} />
+                  <Group justify="flex-end">
+                    <Skeleton height={36} width={80} />
+                  </Group>
+                </Stack>
+              </Card>
+            </Stack>
+          }
+        >
+          <ActionPlansTab mentalModelId={mentalModel.id} />
+        </Suspense>
+      )}
 
-      {/* Q3: Goal after reading */}
-      <Card withBorder p="md">
-        <Group gap="xs" mb="sm">
-          <ThemeIcon color="green" variant="light" size="md">
-            <IconTarget size={16} />
-          </ThemeIcon>
-          <Title order={5}>この本を読んだ後どうなっていたいか？</Title>
-        </Group>
-        {goalAfterReadingAnswers.length > 0 ? (
-          <List
-            spacing="xs"
-            size="sm"
-            icon={
-              <ThemeIcon color="green" size={20} radius="xl" variant="light">
-                <IconCircleCheck size={12} />
-              </ThemeIcon>
-            }
-          >
-            {goalAfterReadingAnswers.map((answer, index) => (
-              <List.Item key={index}>{answer}</List.Item>
-            ))}
-          </List>
-        ) : (
-          <Text size="sm" c="dimmed" fs="italic">
-            回答なし
-          </Text>
-        )}
-      </Card>
-
-      {/* Metadata */}
       <Text size="xs" c="dimmed" ta="right">
         作成日: {new Date(mentalModel.createdAt).toLocaleDateString("ja-JP")}
         {mentalModel.createdAt !== mentalModel.updatedAt && (

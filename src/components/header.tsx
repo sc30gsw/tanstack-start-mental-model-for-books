@@ -21,6 +21,24 @@ function BookIcon({ size = 24 }: { size?: number }) {
   );
 }
 
+function UserIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  );
+}
+
 function LogoutIcon({ size = 16 }: { size?: number }) {
   return (
     <svg
@@ -148,7 +166,7 @@ function UserMenu() {
           メンタルモデル
         </Menu.Item>
 
-        <Menu.Item component={Link} to={`/users/${user.id}`} leftSection={<BookIcon size={16} />}>
+        <Menu.Item component={Link} to={`/users/${user.id}`} leftSection={<UserIcon size={16} />}>
           マイページ
         </Menu.Item>
 

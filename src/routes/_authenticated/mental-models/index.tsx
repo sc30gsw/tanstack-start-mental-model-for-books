@@ -8,7 +8,7 @@ import { useMentalModelsQuery } from "~/features/mental-models/hooks/use-mental-
 import {
   mentalModelDefaultSearchParams,
   mentalModelSearchSchema,
-} from "~/features/mental-models/types/schemas/search-params/search-schema";
+} from "~/features/mental-models/types/schemas/search-params/mental-model-search-schema";
 import { IconPlus } from "@tabler/icons-react";
 import { MentalModelSearchGroup } from "~/features/mental-models/components/mental-model-search-group";
 import type { MentalModelModel } from "~/features/mental-models/api/model";
@@ -68,20 +68,24 @@ function MentalModelsPageContent() {
   const [editingMentalModel, setEditingMentalModel] = useState<MentalModelModel.response | null>(
     null,
   );
+  const [activeTab, setActiveTab] = useState<"basic" | "actionPlans">("basic");
 
   const handleOpenCreateModal = () => {
     setEditingMentalModel(null);
+    setActiveTab("basic");
     openModal();
   };
 
   const handleOpenEditModal = (mentalModel: MentalModelModel.response) => {
     setEditingMentalModel(mentalModel);
+    setActiveTab(mentalModel.status === "completed" ? "actionPlans" : "basic");
     openModal();
   };
 
   const handleCloseModal = () => {
     closeModal();
     setEditingMentalModel(null);
+    setActiveTab("basic");
   };
 
   const handleSubmit = async (
@@ -130,6 +134,8 @@ function MentalModelsPageContent() {
         onClose={handleCloseModal}
         onSubmit={handleSubmit}
         mentalModel={editingMentalModel}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
       />
     </Stack>
   );
